@@ -29,5 +29,3 @@ of kijk eens bij de educom trainings modules:
 * https://e-learning.educom.nu/essentials/HTML/, 
 * https://e-learning.educom.nu/essentials/CSS/ 
 * or an intro into programming on https://e-learning.educom.nu/essentials/ProgrammingBasics/intro/
-
-VERANDERING!!
