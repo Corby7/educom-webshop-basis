@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -54,6 +58,24 @@
             $messageErr = "Bericht is vereist";
         } else {
             $message = test_input($_POST["message"]);
+        }
+
+        //redirect to thankyou page if no errors
+        if (empty($genderErr) && empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($phoneErr) && empty($preferenceErr) && empty($messageErr)) {
+            $submittedData = array(
+                "Aanhef" => $gender,
+                "Voornaam" => $fname,
+                "Achternaam" => $lname,
+                "E-mailadres" => $email,
+                "Telefoonnummer" => $phone,
+                "Communicatievoorkeur" => $preference,
+                "Bericht" => $message
+            );
+
+            $_SESSION['submitted_data'] = $submittedData;
+
+            header("Location: submitted_form.php");
+            exit();
         }
     }
 
