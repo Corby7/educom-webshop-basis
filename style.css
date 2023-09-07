@@ -38,6 +38,11 @@ a {
     text-decoration: none;
 }
 
+.error {
+    color: red;
+    padding-left: 5px;
+}
+
 .content {
     margin: 10px;
 }
@@ -45,6 +50,10 @@ a {
 .content, select, button {
     font-size: 12px;
     color: rgb(70, 70, 70);
+}
+
+.flex-outer {
+    padding-left: 5px;
 }
 
 .flex-outer > li:not(:last-child) {
@@ -72,13 +81,13 @@ a {
 }
 
 .flex-inner {
-    width: 100px;
+    width: 150px;
     gap: 5px;
     padding: 0;
 }
 
 .flex-inner li {
-    gap: 10px;
+    gap: 5px;
 }  
 
 footer {
