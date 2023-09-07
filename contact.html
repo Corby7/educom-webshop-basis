@@ -19,48 +19,57 @@
             </nav>
 
             <div class="content">
-                <form>
+                <form method="post" action="contact.php">
+                    <p><span class="error">* Vereist veld</span></p>
                     <ul class="flex-outer">
                         <li>
                             <label for="gender">Aanhef:</label>
                             <select name="gender" id="gender">
+                                <option disabled selected value> -- maak een keuze -- </option>
                                 <option value="male">Dhr.</option>
                                 <option value="female">Mvr.</option>
-                                <option value="unspecified">...</option>
+                                <option value="unspecified">Anders</option>
                             </select>
+                            <span class="error">*</span>
                         </li>
                         <li>
                             <label for="fname">Voornaam:</label>
-                            <input type="text" id="fname" name="fname">  
+                            <input type="text" id="fname" name="fname">
+                            <span class="error">*</span>  
                         </li>
                         <li>
                             <label for="lname">Achternaam:</label>
-                            <input type="text" id="lname" name="lname">  
+                            <input type="text" id="lname" name="lname">
+                            <span class="error">*</span>  
                         </li>
                         <li>
                             <label for="email">E-mailadres:</label>
                             <input type="email" id="email" name="email"> 
+                            <span class="error">*</span>
                         </li>
                         <li>
                             <label for="phone">Telefoonnummer:</label>
-                            <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}">
+                            <input type="tel" id="phone" name="phone">
+                            <span class="error">*</span>
                         </li>
                         <li>
                             <legend>Communicatievoorkeur:</legend>
                             <ul class="flex-inner">
                                 <li>
-                                    <input type="radio" id="email" name="voorkeur" value="email">
+                                    <input type="radio" id="email" name="preference" value="email">
                                     <label for="email">Email</label>
                                 </li>
                                 <li>
-                                    <input type="radio" id="telefoon" name="voorkeur" value="telefoon">
+                                    <input type="radio" id="phone" name="preference" value="phone">
                                     <label for="telefoon">Telefoon</label> 
                                 </li>
+                                <span class="error">*</span>
                             </ul>
                         </li>
                         <li>
                             <label for="bericht">Bericht:</label>
-                            <textarea id="bericht" name="bericht" rows="5" cols="33"></textarea>
+                            <textarea id="message" name="message" rows="5" cols="33"></textarea>
+                            <span class="error">*</span>
                         </li>
                         <li>
                             <button type="submit">Submit</button> 
@@ -68,9 +77,8 @@
                     </ul>
                 </form>
             </div>
-
             <footer>
-                <p>&#169; 2023 Jules Corbijn Bulsink</p>
+                <p>&copy; 2023 Jules Corbijn Bulsink</p>
             </footer>
         </div>
     </body>
