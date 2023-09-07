@@ -57,7 +57,7 @@ a {
     align-items: center;
 }
 
-.flex-outer > li > label, .flex-outer li p {
+.flex-outer > li > label, .flex-outer li legend {
   flex: 1 0 120px;
   max-width: 220px;
 }
