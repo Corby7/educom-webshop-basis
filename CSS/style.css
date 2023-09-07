@@ -33,7 +33,7 @@ nav > ul {
     background-color: blue;
 }
 
-a {
+nav > ul li > a {
     color: white;
     text-decoration: none;
 }
