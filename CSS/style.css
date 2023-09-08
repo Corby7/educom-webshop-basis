@@ -52,6 +52,10 @@ nav > ul li > a {
     color: rgb(70, 70, 70);
 }
 
+.submitted_data {
+    list-style-type: none;
+}
+
 .flex-outer {
     padding-left: 5px;
 }
