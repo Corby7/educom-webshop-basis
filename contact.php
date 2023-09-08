@@ -10,7 +10,7 @@
     //define variables and set to empty values
     $gender = $fname = $lname = $email = $phone = $preference = $message = "";
     $genderErr = $fnameErr = $lnameErr = $emailErr = $phoneErr = $preferenceErr = $messageErr = "";
-    $valid = "";
+    $valid = false;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (empty($_POST["gender"]))  {
