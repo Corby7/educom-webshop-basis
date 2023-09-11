@@ -27,7 +27,7 @@ function getUrlVar($key, $default = '') {
 
 function showResponsePage($page) {
     beginDocument();
-    showHeadSection();
+    showHeadSection($page);
     showBodySection($page);
     endDocument();
 }
@@ -37,11 +37,32 @@ function beginDocument() {
     <html>';
 }
 
-function showHeadSection() {
-    echo '<head>
-    <link rel="stylesheet" href="CSS/style.css">
-    <title>Home-ProtoWebsite</title>
-    </head>';
+function showHeadSection($page) {
+    echo '    <head>' . PHP_EOL;
+    echo '<link rel="stylesheet" href="CSS/style.css">';
+    showTitle($page);
+    echo '    </head>' . PHP_EOL;
+}
+
+function showTitle($page) {
+    switch ($page) {
+        case 'home':
+            require('home.php');
+            showHomeTitle();
+            break;
+        case 'about':
+            require('about.php');
+            showAboutTitle();
+            break;
+        case 'contact':
+            require('contact.php');
+            showContactTitle();
+            break;
+        default:
+            require('error.php');
+            showErrorTitle();
+            break;
+    }
 }
 
 function showBodySection($page) {
@@ -49,7 +70,7 @@ function showBodySection($page) {
     echo '<div class="container">';
     showHeader($page);
     showMenu();
-    //showContent($page); 
+    showContent($page); 
     showFooter();
     echo '</div>';
     echo '    </body>' . PHP_EOL; 
@@ -62,17 +83,17 @@ function endDocument() {
 function showHeader($page) {
     switch ($page) {
         case 'home':
-            require('home.php');
             showHomeHeader();
             break;
-        case 'about'
-            require('about.php');
+        case 'about':
             showAboutHeader();
             break;
-        case 'contact'
-        require('contact.php');
-        showContactHeader();
-        break;
+        case 'contact':
+            showContactHeader();
+            break;
+        default:
+            showErrorHeader();
+            break;
     }
 }
 
@@ -85,6 +106,25 @@ function showMenu() {
             </ul> 
         </nav>';
 }
+
+
+function showContent($page) {
+    switch ($page) {
+        case 'home':
+            showHomeContent();
+            break;
+        case 'about':
+            showAboutContent();
+            break;
+        case 'contact':
+            showContactContent();
+            break;
+        default:
+            showErrorContent();
+            break;
+    }
+}
+
 
 function showFooter() {
     echo '<footer>
