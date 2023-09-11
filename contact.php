@@ -16,8 +16,7 @@
         if (empty($_POST["gender"]))  {
             $genderErr = "Aanhef is vereist";
         } else {
-        //don't test input as it's just a selection? 
-        $gender = $_POST["gender"];
+            $gender = test_input($_POST["gender"]);
         }
 
         if (empty($_POST["fname"])) {
@@ -46,9 +45,8 @@
 
         if (empty($_POST["preference"])) {
             $preferenceErr = "Voorkeur is vereist";
-        } else {
-            //don't test input as it's just a selection?    
-            $preference = $_POST["preference"];
+        } else {   
+            $preference = test_input($_POST["preference"]);
         }
 
         if (empty($_POST["message"])) {
