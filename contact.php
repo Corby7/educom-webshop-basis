@@ -113,9 +113,9 @@
                                 <label for="gender">Aanhef:</label>
                                 <select name="gender" id="gender">
                                 <option disabled selected value> -- maak een keuze -- </option>
-                                <option value="male" <?php if (isset($gender) && $gender == "male") echo "selected"; ?>>Dhr.</option>
-                                <option value="female" <?php if (isset($gender) && $gender == "female") echo "selected"; ?>>Mvr.</option>
-                                <option value="unspecified" <?php if (!isset($gender) || $gender == "unspecified") echo "selected"; ?>>Anders</option>
+                                <option value="male" <?php if ($gender == "male") echo "selected"; ?>>Dhr.</option>
+                                <option value="female" <?php if ($gender == "female") echo "selected"; ?>>Mvr.</option>
+                                <option value="unspecified" <?php if ($gender == "unspecified") echo "selected"; ?>>Anders</option>
                                 </select>
                                 <span class="error">* <?php echo $genderErr;?></span>
                             </li>
@@ -144,13 +144,13 @@
                                 <ul class="flex-inner">
                                     <li>
                                         <input type="radio" id="email" name="preference" 
-                                        <?php if (isset($preference) && $preference=="email") echo "checked";?>
+                                        <?php if ($preference=="email") echo "checked";?>
                                         value="email">
                                         <label for="email">Email</label>
                                     </li>
                                     <li>
                                         <input type="radio" id="phone" name="preference" 
-                                        <?php if (isset($preference) && $preference=="phone") echo "checked";?>
+                                        <?php if ($preference=="phone") echo "checked";?>
                                         value="phone">
                                         <label for="telefoon">Telefoon</label> 
                                     </li>
