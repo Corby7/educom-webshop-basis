@@ -13,9 +13,7 @@ function showHomeHeader() {
 
 function showHomeContent() {
     echo '
-    <div class="content">
-        <p>Welkom op mijn ProtoWebsite! Zoals de naam hopelijk al verhuld is dit een prototype voor mijn eerste website voor Educom. <br> Veel browseplezier!</p>
-    </div>';
+    <p>Welkom op mijn ProtoWebsite! Zoals de naam hopelijk al verhuld is dit een prototype voor mijn eerste website voor Educom. <br> Veel browseplezier!</p>';
 }
 
 ?>

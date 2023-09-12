@@ -33,7 +33,8 @@ function showResponsePage($page) {
 }
 
 function beginDocument() {
-    echo '<!DOCTYPE html>
+    echo '
+    <!DOCTYPE html>
     <html>';
 }
 
@@ -67,12 +68,14 @@ function showTitle($page) {
 
 function showBodySection($page) {
     echo '    <body>' . PHP_EOL;
-    echo '<div class="container">';
-    showHeader($page);
-    showMenu();
-    showContent($page); 
-    showFooter();
-    echo '</div>';
+        echo '<div class="container">';
+            showHeader($page);
+            showMenu();
+            echo '<div class="content">';
+                showContent($page);
+            echo '</div>'; 
+            showFooter();
+        echo '</div>';
     echo '    </body>' . PHP_EOL; 
 }
 
@@ -98,13 +101,14 @@ function showHeader($page) {
 }
 
 function showMenu() {
-    echo '<nav>
-            <ul>
-                <li><a href="index.php?page=home">HOME</a></li>|
-                <li><a href="index.php?page=about">ABOUT</a></li>|
-                <li><a href="index.php?page=contact">CONTACT</a></li>
-            </ul> 
-        </nav>';
+    echo '
+    <nav>
+        <ul>
+            <li><a href="index.php?page=home">HOME</a></li>|
+            <li><a href="index.php?page=about">ABOUT</a></li>|
+            <li><a href="index.php?page=contact">CONTACT</a></li>
+        </ul> 
+    </nav>';
 }
 
 
@@ -127,9 +131,10 @@ function showContent($page) {
 
 
 function showFooter() {
-    echo '<footer>
-            <p>&copy; 2023 Jules Corbijn Bulsink</p>
-        </footer>';
+    echo '
+    <footer>
+        <p>&copy; 2023 Jules Corbijn Bulsink</p>
+    </footer>';
 }
 
 ?>  

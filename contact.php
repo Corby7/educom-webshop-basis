@@ -122,71 +122,69 @@ function showContactForm() {
     global $genderErr, $fnameErr, $lnameErr, $emailErr, $phoneErr, $preferenceErr, $messageErr;
 
     echo '
-    <div class="content">
-        <form method="post" action="index.php">
-            <p><span class="error">* Vereist veld</span></p>
-            <ul class="flex-outer">
+    <form method="post" action="index.php">
+        <p><span class="error"><strong>* Vereist veld</strong></span></p>
+        <ul class="flex-outer">
 
-                <li>
-                    <label for="gender">Aanhef:</label>
-                    <select name="gender" id="gender">
-                    <option disabled selected value> -- maak een keuze -- </option>
-                    <option value="male" ' . ($gender == "male" ? "selected" : "") . '>Dhr.</option>
-                    <option value="female" ' . ($gender == "female" ? "selected" : "") . '>Mvr.</option>
-                    <option value="unspecified" ' . ($gender == "unspecified" ? "selected" : "") . '>Anders</option>
-                    </select>
-                    <span class="error">* ' . $genderErr . '</span>
-                </li>
+            <li>
+                <label for="gender">Aanhef:</label>
+                <select name="gender" id="gender">
+                <option disabled selected value> -- maak een keuze -- </option>
+                <option value="male" ' . ($gender == "male" ? "selected" : "") . '>Dhr.</option>
+                <option value="female" ' . ($gender == "female" ? "selected" : "") . '>Mvr.</option>
+                <option value="unspecified" ' . ($gender == "unspecified" ? "selected" : "") . '>Anders</option>
+                </select>
+                <span class="error">* ' . $genderErr . '</span>
+            </li>
 
-                <li>
-                    <label for="fname">Voornaam:</label>
-                    <input type="text" id="fname" name="fname" value="' . $fname . '">
-                    <span class="error">* ' . $fnameErr . '</span>
-                </li>
-                
-                <li>
-                    <label for="lname">Achternaam:</label>
-                    <input type="text" id="lname" name="lname" value="' . $lname . '">
-                    <span class="error">* ' . $lnameErr . '</span>
-                </li>
-                
-                <li>
-                    <label for="email">E-mailadres:</label>
-                    <input type="email" id="email" name="email" value="' . $email . '">
-                    <span class="error">* ' . $emailErr . '</span>
-                </li>
-                
-                <li>
-                    <label for="phone">Telefoonnummer:</label>
-                    <input type="tel" id="phone" name="phone" value="' . $phone . '">
-                    <span class="error">* ' . $phoneErr . '</span>
-                </li>
-                
-                <li>
-                    <legend>Communicatievoorkeur:</legend>
-                    <ul class="flex-inner">
-                        <li>
-                            <input type="radio" id="email" name="preference" value="email" ' . ($preference == "email" ? "checked" : "") . '>
-                            <label for="email">Email</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="phone" name="preference" value="phone" ' . ($preference == "phone" ? "checked" : "") . '>
-                            <label for="telefoon">Telefoon</label>
-                        </li>
-                    </ul>
-                    <span class="error">* ' . $preferenceErr . '</span>
-                </li>
-                
-                <li>
-                    <label for="bericht">Bericht:</label>
-                    <textarea id="message" name="message" rows="5" cols="33">' . $message . '</textarea>
-                    <span class="error">* ' . $messageErr . '</span>
-                </li>
-                
-                <li>
-                    <button type="submit" name="page" value="contact">Submit</button>
-                </li>
-    </div>';
+            <li>
+                <label for="fname">Voornaam:</label>
+                <input type="text" id="fname" name="fname" value="' . $fname . '">
+                <span class="error">* ' . $fnameErr . '</span>
+            </li>
+            
+            <li>
+                <label for="lname">Achternaam:</label>
+                <input type="text" id="lname" name="lname" value="' . $lname . '">
+                <span class="error">* ' . $lnameErr . '</span>
+            </li>
+            
+            <li>
+                <label for="email">E-mailadres:</label>
+                <input type="email" id="email" name="email" value="' . $email . '">
+                <span class="error">* ' . $emailErr . '</span>
+            </li>
+            
+            <li>
+                <label for="phone">Telefoonnummer:</label>
+                <input type="tel" id="phone" name="phone" value="' . $phone . '">
+                <span class="error">* ' . $phoneErr . '</span>
+            </li>
+            
+            <li>
+                <legend>Communicatievoorkeur:</legend>
+                <ul class="flex-inner">
+                    <li>
+                        <input type="radio" id="email" name="preference" value="email" ' . ($preference == "email" ? "checked" : "") . '>
+                        <label for="email">Email</label>
+                    </li>
+                    <li>
+                        <input type="radio" id="phone" name="preference" value="phone" ' . ($preference == "phone" ? "checked" : "") . '>
+                        <label for="telefoon">Telefoon</label>
+                    </li>
+                </ul>
+                <span class="error">* ' . $preferenceErr . '</span>
+            </li>
+            
+            <li>
+                <label for="bericht">Bericht:</label>
+                <textarea id="message" name="message" rows="5" cols="33">' . $message . '</textarea>
+                <span class="error">* ' . $messageErr . '</span>
+            </li>
+            
+            <li>
+                <button type="submit" name="page" value="contact">Submit</button>
+            </li>';
 }
 
 ?>
