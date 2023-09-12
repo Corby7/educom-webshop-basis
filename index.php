@@ -69,7 +69,9 @@ function showTitle($page) {
 function showBodySection($page) {
     echo '    <body>' . PHP_EOL;
         echo '<div class="container">';
-            showHeader($page);
+            echo '<header>';
+                showHeader($page);
+            echo '</header>';
             showMenu();
             echo '<div class="content">';
                 showContent($page);

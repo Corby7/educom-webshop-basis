@@ -5,10 +5,7 @@ function showErrorTitle() {
 }
 
 function showErrorHeader() {
-    echo '
-    <header>
-        <h1>Error 404</h1>
-    </header>';
+    echo '<h1>Error 404</h1>';
 }
 
 function showErrorContent() {

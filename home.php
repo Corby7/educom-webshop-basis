@@ -5,10 +5,7 @@ function showHomeTitle() {
 }
 
 function showHomeHeader() {
-    echo '
-    <header>
-        <h1>Welkom op Mijn Website</h1>
-    </header>';
+    echo '<h1>Welkom op Mijn Website</h1>';
 }
 
 function showHomeContent() {

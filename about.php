@@ -5,10 +5,7 @@ function showAboutTitle() {
 }
 
 function showAboutHeader() {
-    echo '
-    <header>
-        <h1>Over Mij</h1> 
-    </header>';
+    echo '<h1>Over Mij</h1>';
 }
 
 function showAboutContent() {

@@ -8,9 +8,7 @@ function showContactTitle() {
 }
 
 function showContactHeader() {
-    echo '<header>
-            <h1>Contacteer Mij</h1>
-        </header>';
+    echo '<h1>Contacteer Mij</h1>';
 }
 
 function showContactContent() {
