@@ -1,11 +1,11 @@
 <?php
 
 function showErrorTitle() {
-    echo '<title>Page Not Found</title>';
+    echo 'Page Not Found';
 }
 
 function showErrorHeader() {
-    echo '<h1>Error 404</h1>';
+    echo 'Error 404';
 }
 
 function showErrorContent() {

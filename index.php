@@ -46,31 +46,35 @@ function showHeadSection($page) {
 }
 
 function showTitle($page) {
-    switch ($page) {
-        case 'home':
-            require('home.php');
-            showHomeTitle();
-            break;
-        case 'about':
-            require('about.php');
-            showAboutTitle();
-            break;
-        case 'contact':
-            require('contact.php');
-            showContactTitle();
-            break;
-        default:
-            require('error.php');
-            showErrorTitle();
-            break;
-    }
+    echo '<title>';
+        switch ($page) {
+            case 'home':
+                require('home.php');
+                showHomeTitle();
+                break;
+            case 'about':
+                require('about.php');
+                showAboutTitle();
+                break;
+            case 'contact':
+                require('contact.php');
+                showContactTitle();
+                break;
+            default:
+                require('error.php');
+                showErrorTitle();
+                break;
+        }
+    echo '-ProtoWebsite</title>';
 }
 
 function showBodySection($page) {
     echo '    <body>' . PHP_EOL;
         echo '<div class="container">';
             echo '<header>';
-                showHeader($page);
+                echo '<h1>';
+                    showHeader($page);
+                echo '</h1>';
             echo '</header>';
             showMenu();
             echo '<div class="content">';
@@ -108,7 +112,8 @@ function showMenu() {
         <ul>
             <li><a href="index.php?page=home">HOME</a></li>|
             <li><a href="index.php?page=about">ABOUT</a></li>|
-            <li><a href="index.php?page=contact">CONTACT</a></li>
+            <li><a href="index.php?page=contact">CONTACT</a></li>|
+            <li><a href="index.php?page=register">REGISTER</a></li>
         </ul> 
     </nav>';
 }

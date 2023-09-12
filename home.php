@@ -1,11 +1,11 @@
 <?php
 
 function showHomeTitle() {
-    echo '<title>Home-ProtoWebsite</title>';
+    echo 'Home';
 }
 
 function showHomeHeader() {
-    echo '<h1>Welkom op Mijn Website</h1>';
+    echo 'Welkom op Mijn Website';
 }
 
 function showHomeContent() {

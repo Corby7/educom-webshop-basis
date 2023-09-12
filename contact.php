@@ -4,11 +4,11 @@ $genderErr = $fnameErr = $lnameErr = $emailErr = $phoneErr = $preferenceErr = $m
 $valid = false;
 
 function showContactTitle() {
-    echo '<title>Contact-ProtoWebsite</title>';
+    echo 'ProtoWebsite';
 }
 
 function showContactHeader() {
-    echo '<h1>Contacteer Mij</h1>';
+    echo 'Contacteer Mij';
 }
 
 function showContactContent() {
@@ -103,16 +103,14 @@ function showContactThanks() {
     global $gender, $fname, $lname, $email, $phone, $preference, $message;
     
     echo '
-        <div class="content">
-        <h2>Beste ' . getSalutation($gender) . ' ' . $fname . ' ' . $lname . ', bedankt voor het invullen van uw gegevens!</h2>
-        <h3>Ik zal zo snel mogelijk contact met u opnemen. Ter bevestiging uw informatie:</h3>
-        <ul class="submitted_data">
-            <li><strong>E-mailadres: </strong>' . $email . '</li>
-            <li><strong>Telefoonnummer: </strong>' . $phone . '</li>
-            <li><strong>Communicatievoorkeur: </strong>' . $preference . '</li>
-            <li><strong>Bericht: </strong>' . $message . '</li>
-        </ul>
-    </div>';
+    <h2>Beste ' . getSalutation($gender) . ' ' . $fname . ' ' . $lname . ', bedankt voor het invullen van uw gegevens!</h2>
+    <h3>Ik zal zo snel mogelijk contact met u opnemen. Ter bevestiging uw informatie:</h3>
+    <ul class="submitted_data">
+        <li><strong>E-mailadres: </strong>' . $email . '</li>
+        <li><strong>Telefoonnummer: </strong>' . $phone . '</li>
+        <li><strong>Communicatievoorkeur: </strong>' . $preference . '</li>
+        <li><strong>Bericht: </strong>' . $message . '</li>
+    </ul>';
 }
 
 function showContactForm() {

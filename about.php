@@ -1,11 +1,11 @@
 <?php
 
 function showAboutTitle() {
-    echo '<title>About-ProtoWebsite</title>';
+    echo 'About';
 }
 
 function showAboutHeader() {
-    echo '<h1>Over Mij</h1>';
+    echo 'Over Mij';
 }
 
 function showAboutContent() {
