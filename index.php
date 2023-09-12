@@ -60,6 +60,10 @@ function showTitle($page) {
                 require('contact.php');
                 showContactTitle();
                 break;
+            case 'register':
+                require('register.php');
+                showRegisterTitle();
+                break;   
             default:
                 require('error.php');
                 showErrorTitle();
@@ -100,6 +104,9 @@ function showHeader($page) {
         case 'contact':
             showContactHeader();
             break;
+        case 'register':
+            showRegisterHeader();
+            break;    
         default:
             showErrorHeader();
             break;
@@ -129,6 +136,9 @@ function showContent($page) {
             break;
         case 'contact':
             showContactContent();
+            break;
+        case 'register':
+            showRegisterContent();
             break;
         default:
             showErrorContent();
