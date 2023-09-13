@@ -1,7 +1,10 @@
 <?php
 $fname = $lname = $email = $pass = $repeatpass = ""; 
-$fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = "";  
+$fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = $emailknownErr = "";  
 $valid = false;
+
+//call readUserDataFile to obtain the user data
+$userdata_array = readUserDataFile("users/users.txt");
 
 function showRegisterTitle() {
     echo 'Register';
@@ -12,17 +15,25 @@ function showRegisterHeader() {
 }
 
 function showRegisterContent() {
-    global $valid, $email;
+    global $valid, $email, $userdata_array;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         validateRegisterForm();
         if ($valid === true) {
+            //passwords are equal, do something when condition is true
             if (validatePassword()) {
-                checkKnownEmail($email);
-                // Passwords are equal, do something when condition is true
+                //if email is unknown, do something
+                if (checkUnknownEmail($email, $userdata_array)) {
+
+                //email is known already, show error
+                } else {
+                    showRegisterForm();
+                }
+            
+            //passwords are not equal, show error
             } else {
-                // Passwords are not equal, do something when condition is false
                 echo "Passwords do not match.";
+                readUserDataFile("users/users.txt");
                 showRegisterForm();
             }
         } else {
@@ -35,34 +46,116 @@ function showRegisterContent() {
     }
 }
 
-function checkKnownEmail($email) {
-    //test to see if email comes through correctly
-    echo 'Email: ' . $email . ' <br>';
+function readUserDataFile() {
+    global $userdata_array;
+    // Specify the path to the .txt file
+    $file_path = 'users/users.txt';
 
-    $filename = "users/users.txt";
-    $found = false;
+    //initialize an empty array to store the data
+    $userdata_array = array();
 
-    //open the file for reading
-    $usersfile = fopen("$filename", "r") or die("Unable to open file!"); // Add error handling
+    //open the file for reading or give error when unable to
+    $usersfile = fopen($file_path, 'r') or die("Unable to open file!");
 
+    while(!feof($usersfile)) {
+        $line = fgets($usersfile);
+        $values = explode('|', $line);
 
-    //read the file line by line
-    while (!feof($usersfile)) {
-        $newusersfile = explode("|", $usersfile);
-        echo fgets($newusersfile); // Use fgets to read line by line
+        if (count($values) === 3) {
+            $userdata_array[] = array(
+                'email' => trim($values[0]),
+                'name' => trim($values[1]),
+                'password' => trim($values[2])
+            );
+        }
     }
-    //     //check if the line contains the email address
-    //     if (strpos($usersfile, $email) !== false) {
-    //         echo 'Email found';
-    //         $found = true;
-    //         break;
+
+    //close the file
+    fclose($usersfile);
+    return $userdata_array;
+}
+
+function checkUnknownEmail($email, $userdata_array) {
+    global $emailknownErr;
+
+    foreach ($userdata_array as $userdata) {
+        if ($userdata['email'] === $email) {
+            $emailknownErr = "E-mailadres is reeds bekend"; 
+            echo 'Match found';
+            return false; // Match found
+        }
+    }
+
+    echo 'Match not found';
+    return true; // Match not found
+}
+
+
+// function checkUnknownEmail($email) {
+//     global $emailknownErr;
+//     $found = "";
+
+//     //test to see if email comes through correctly
+//     echo 'Email: ' . $email . ' <br>';
+
+//     // Specify the path to the .txt file
+//     $file_path = 'users/users.txt';
+
+//     //initialize an empty array to store the data
+//     $userdata_array = array();
+
+//     //open the file for reading or give error when unable to
+//     $usersfile = fopen($file_path, 'r') or die("Unable to open file!");
+
+//     while(!feof($usersfile)) {
+//         $line = fgets($usersfile);
+//         $values = explode('|', $line);
+//         //echo $line . "<br>";
+
+//         if (count($values) === 3) {
+//             $userdata_array[] = array(
+//                 'email' => trim($values[0]),
+//                 'name' => trim($values[1]),
+//                 'password' => trim($values[2])
+//             );
+//         }
+//     }
+
+//     foreach ($userdata_array as $userdata) {
+//         if ($userdata['email'] === $email) {
+//             $found = true;
+//             break; // Exit the loop when a match is found
+//         }
+//     }
+
+//     if ($found) {
+//         echo "Match found <br>";
+//     } else {
+//         echo "Match not found";
+//     }
+
+
+    // foreach ($userdata_array as $userdata) {
+    //     if ($userdata['email'] === $email) {
+    //         echo 'Email al bekend';
+    //         $emailknownErr = "E-mailadres is reeds bekend";
+    //         return false;
     //     } else {
-    //         echo 'Email not found';
+    //         echo 'Email on bekend';
+    //         return true;
     //     }
     // }
 
-    fclose($usersfile);
-}
+//     //close the file
+//     fclose($usersfile);
+
+//     //temp
+//     foreach($userdata_array as $userdata) {
+//         echo "<br><br> Email: " . $userdata['email'] . "<br>";
+//         echo "Name: " . $userdata['name'] . "<br>";
+//         echo "Password: " . $userdata['password'] . "<br><br>";
+//     }
+// }
 
 function validateRegisterForm() {
     global $fname, $lname, $email, $pass, $repeatpass; 
@@ -109,11 +202,12 @@ function validatePassword() {
     global $pass, $repeatpass;
     global $passcheckErr; 
 
-    if ($pass === $repeatpass) {
-        return true;
-    } else {
+    if ($pass !== $repeatpass) {
         $passcheckErr = "Wachtwoorden komen niet overeen";
+        return false;
     }
+
+    return true;
 }
 
 function test_input($data) {
@@ -125,7 +219,7 @@ function test_input($data) {
 
 function showRegisterForm() {
     global $fname, $lname, $email, $pass, $repeatpass; 
-    global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr, $passcheckErr; 
+    global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr, $passcheckErr, $emailknownErr; 
 
     echo '
     <form method="post" action="index.php">
@@ -147,7 +241,7 @@ function showRegisterForm() {
             <li>
                 <label for="email">E-mailadres:</label>
                 <input type="email" id="email" name="email" value="' . $email . '">
-                <span class="error">* ' . $emailErr . '</span>
+                <span class="error">* ' . $emailErr . $emailknownErr . '</span>
             </li>
 
             <li>
