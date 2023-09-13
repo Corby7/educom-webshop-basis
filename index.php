@@ -73,28 +73,24 @@ function showTitle($page) {
     echo '-ProtoWebsite</title>';
 }
 
-function showBodySection($page) {
-    echo '    <body>' . PHP_EOL;
-        echo '<div class="container">';
-            echo '<header>';
-                echo '<h1>';
-                    showHeader($page);
-                echo '</h1>';
-            echo '</header>';
-            showMenu();
-            echo '<div class="content">';
-                showContent($page);
-            echo '</div>'; 
-            showFooter();
-        echo '</div>';
-    echo '    </body>' . PHP_EOL; 
-}
+function showBodySection($page) { 
+    echo '<body>' . PHP_EOL;
+    echo '  <div class="container">' . PHP_EOL; 
+    showHeader($page); 
+    showMenu(); 
+    showContent($page); 
+    showFooter(); 
+    echo '  </div>' . PHP_EOL;         
+    echo '</body>' . PHP_EOL;  
+} 
 
 function endDocument() {
     echo '</html>';
 }
 
 function showHeader($page) {
+    echo '<header>' . PHP_EOL;
+    echo '  <h1>';
     switch ($page) {
         case 'home':
             showHomeHeader();
@@ -112,6 +108,8 @@ function showHeader($page) {
             showErrorHeader();
             break;
     }
+    echo '  </h1>';
+    echo '</header>' . PHP_EOL;
 }
 
 function showMenu() {
@@ -128,6 +126,7 @@ function showMenu() {
 
 
 function showContent($page) {
+    echo '<div class="content">' . PHP_EOL;
     switch ($page) {
         case 'home':
             showHomeContent();
@@ -145,6 +144,7 @@ function showContent($page) {
             showErrorContent();
             break;
     }
+    echo '</div>' . PHP_EOL;
 }
 
 
