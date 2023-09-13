@@ -21,19 +21,11 @@ function showRegisterContent() {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         validateRegisterForm();
         if ($valid === true) {
-            //passwords are equal, do something when condition is true
-            if (validatePassword($pass, $repeatpass)) {
-                //if email is unknown, save new userdata
-                if (checkUnknownEmail($email, $userdata_array)) {
-                    writeUserDataFile($email, $name, $pass);
-                //if email is known already, show error
-                } else {
-                    showRegisterForm();
-                }
-            
-            //passwords are not equal, show error
+            //if email is unknown, save new userdata
+            if (checkUnknownEmail($email, $userdata_array)) {
+                writeUserDataFile($email, $name, $pass);
+            //if email is known already, show error
             } else {
-                echo "Passwords do not match.";
                 showRegisterForm();
             }
         } else {
@@ -101,7 +93,7 @@ function checkUnknownEmail($email, $userdata_array) {
 
 function validateRegisterForm() {
     global $name, $fname, $lname, $email, $pass, $repeatpass; 
-    global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr; 
+    global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr, $passcheckErr; 
     global $valid;
 
     if (empty($_POST["fname"])) {
@@ -134,8 +126,12 @@ function validateRegisterForm() {
         $repeatpass = test_input($_POST["repeatpass"]);
     }
 
+    if (empty($passErr) && empty($repeatpassErr)) {
+        validatePassword($pass, $repeatpass);
+    }
+
     //if no errors found set $valid to true
-    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr)) {
+    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr) && empty($passcheckErr)) {
         $name = $fname . ' ' . $lname;
         $valid = true;
     }
