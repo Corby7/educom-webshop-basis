@@ -112,18 +112,25 @@ function showHeader($page) {
     echo '</header>' . PHP_EOL;
 }
 
-function showMenu() {
+function showMenu() { 
+    echo ' 
+    <nav> 
+        <ul>';
+    showMenuItem("home", "HOME"); 
+    echo '|';
+    showMenuItem("about", "ABOUT");
+    echo '|'; 
+    showMenuItem("contact", "CONTACT");
+    echo '|'; 
+    showMenuItem("register", "REGISTER"); 
     echo '
-    <nav>
-        <ul>
-            <li><a href="index.php?page=home">HOME</a></li>|
-            <li><a href="index.php?page=about">ABOUT</a></li>|
-            <li><a href="index.php?page=contact">CONTACT</a></li>|
-            <li><a href="index.php?page=register">REGISTER</a></li>
-        </ul> 
-    </nav>';
-}
+        </ul>  
+    </nav>'; 
+} 
 
+function showMenuItem($link, $text) {
+    echo '<li><a href="index.php?page=' . $link . '">' . $text . '</a></li>';
+}
 
 function showContent($page) {
     echo '<div class="content">' . PHP_EOL;
