@@ -21,7 +21,8 @@ function getPostVar($key, $default = '') {
 }
 
 function getUrlVar($key, $default = '') {
-    return isset($_GET[$key]) ? $_GET[$key] : $default;
+    $value = filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING);
+    return isset($value) ? $value : $default;
 }
 
 
