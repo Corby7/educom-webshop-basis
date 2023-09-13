@@ -20,7 +20,7 @@ function showRegisterContent() {
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         validateRegisterForm();
-        if ($valid === true) {
+        if ($valid) {
             //if email is unknown, save new userdata
             if (checkUnknownEmail($email, $userdata_array)) {
                 writeUserDataFile($email, $name, $pass);

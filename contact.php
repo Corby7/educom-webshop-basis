@@ -15,7 +15,7 @@ function showContactContent() {
     global $valid;
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         validateContactForm();
-        if ($valid === true) {
+        if ($valid) {
             //display submitted data if $valid is true
             showContactThanks();
         } else {
