@@ -1,2 +1,4 @@
-[email]|[naam]|[wachtwoord]
+[email]|[name]|[password]
 coach@man-kind.nl|Geert Weggemans|halt!
+pavlo@man-kind.nl|Corbijn Bulsink|corbijn7
+pavlo2@man-kind.nl|Corbijn Bulsink|corbijn7
