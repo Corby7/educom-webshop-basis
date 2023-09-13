@@ -1,10 +1,11 @@
 <?php
-$fname = $lname = $email = $pass = $repeatpass = ""; 
-$fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = $emailknownErr = "";  
+$name = $fname = $lname = $email = $pass = $repeatpass = ""; 
+$fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = $emailknownErr = "";
 $valid = false;
 
+$userdatafile_path = 'users/users.txt';
 //call readUserDataFile to obtain the user data
-$userdata_array = readUserDataFile("users/users.txt");
+$userdata_array = readUserDataFile($userdatafile_path);
 
 function showRegisterTitle() {
     echo 'Register';
@@ -15,17 +16,17 @@ function showRegisterHeader() {
 }
 
 function showRegisterContent() {
-    global $valid, $email, $userdata_array;
+    global $valid, $email, $userdata_array, $pass, $repeatpass, $name;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         validateRegisterForm();
         if ($valid === true) {
             //passwords are equal, do something when condition is true
-            if (validatePassword()) {
-                //if email is unknown, do something
+            if (validatePassword($pass, $repeatpass)) {
+                //if email is unknown, save new userdata
                 if (checkUnknownEmail($email, $userdata_array)) {
-
-                //email is known already, show error
+                    writeUserDataFile($email, $name, $pass);
+                //if email is known already, show error
                 } else {
                     showRegisterForm();
                 }
@@ -33,7 +34,6 @@ function showRegisterContent() {
             //passwords are not equal, show error
             } else {
                 echo "Passwords do not match.";
-                readUserDataFile("users/users.txt");
                 showRegisterForm();
             }
         } else {
@@ -46,16 +46,14 @@ function showRegisterContent() {
     }
 }
 
-function readUserDataFile() {
+function readUserDataFile($userdatafile_path) {
     global $userdata_array;
-    // Specify the path to the .txt file
-    $file_path = 'users/users.txt';
 
     //initialize an empty array to store the data
     $userdata_array = array();
 
     //open the file for reading or give error when unable to
-    $usersfile = fopen($file_path, 'r') or die("Unable to open file!");
+    $usersfile = fopen($userdatafile_path, 'r') or die("Unable to open file!");
 
     while(!feof($usersfile)) {
         $line = fgets($usersfile);
@@ -75,6 +73,17 @@ function readUserDataFile() {
     return $userdata_array;
 }
 
+function writeUserDataFile($email, $name, $pass) {
+    // Specify the path to the .txt file
+    $userdatafile_path = 'users/users.txt';
+
+    //open userdata file, append new userdata in newline and close file
+    $usersfile = fopen($userdatafile_path, 'a') or die("Unable to open file!");
+    $newUserDatatxt = $email . '|' . $name . '|' . $pass . "\n";
+    fwrite($usersfile, $newUserDatatxt);
+    fclose($usersfile);
+}
+
 function checkUnknownEmail($email, $userdata_array) {
     global $emailknownErr;
 
@@ -91,7 +100,7 @@ function checkUnknownEmail($email, $userdata_array) {
 }
 
 function validateRegisterForm() {
-    global $fname, $lname, $email, $pass, $repeatpass; 
+    global $name, $fname, $lname, $email, $pass, $repeatpass; 
     global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr; 
     global $valid;
 
@@ -127,12 +136,12 @@ function validateRegisterForm() {
 
     //if no errors found set $valid to true
     if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr)) {
+        $name = $fname . ' ' . $lname;
         $valid = true;
     }
 }
 
-function validatePassword() {
-    global $pass, $repeatpass;
+function validatePassword($pass, $repeatpass) {
     global $passcheckErr; 
 
     if ($pass !== $repeatpass) {
