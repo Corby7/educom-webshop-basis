@@ -12,12 +12,13 @@ function showRegisterHeader() {
 }
 
 function showRegisterContent() {
-    global $valid;
+    global $valid, $email;
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         validateRegisterForm();
         if ($valid === true) {
             if (validatePassword()) {
-                checkKnownEmail();
+                checkKnownEmail($email);
                 // Passwords are equal, do something when condition is true
             } else {
                 // Passwords are not equal, do something when condition is false
@@ -34,12 +35,31 @@ function showRegisterContent() {
     }
 }
 
-function checkKnownEmail() {
-    $usersfile = fopen("users/users.txt", "r") or die("Unable to open file!"); // Add error handling
+function checkKnownEmail($email) {
+    //test to see if email comes through correctly
+    echo 'Email: ' . $email . ' <br>';
 
+    $filename = "users/users.txt";
+    $found = false;
+
+    //open the file for reading
+    $usersfile = fopen("$filename", "r") or die("Unable to open file!"); // Add error handling
+
+
+    //read the file line by line
     while (!feof($usersfile)) {
-        echo fgets($usersfile); // Use fgets to read line by line
+        $newusersfile = explode("|", $usersfile);
+        echo fgets($newusersfile); // Use fgets to read line by line
     }
+    //     //check if the line contains the email address
+    //     if (strpos($usersfile, $email) !== false) {
+    //         echo 'Email found';
+    //         $found = true;
+    //         break;
+    //     } else {
+    //         echo 'Email not found';
+    //     }
+    // }
 
     fclose($usersfile);
 }
