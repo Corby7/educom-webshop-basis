@@ -64,7 +64,11 @@ function showTitle($page) {
             case 'register':
                 require('register.php');
                 showRegisterTitle();
-                break;   
+                break;
+            case 'login':
+                require('login.php');
+                showLoginTitle();
+                break;    
             default:
                 require('error.php');
                 showErrorTitle();
@@ -103,7 +107,10 @@ function showHeader($page) {
             break;
         case 'register':
             showRegisterHeader();
-            break;    
+            break;
+        case 'login':
+            showLoginHeader();
+            break;     
         default:
             showErrorHeader();
             break;
@@ -123,6 +130,8 @@ function showMenu() {
     showMenuItem("contact", "CONTACT");
     echo '|'; 
     showMenuItem("register", "REGISTER"); 
+    echo '|';
+    showMenuItem("login", "LOGIN"); 
     echo '
         </ul>  
     </nav>'; 
@@ -146,6 +155,9 @@ function showContent($page) {
             break;
         case 'register':
             showRegisterContent();
+            break;
+        case 'login':
+            showLoginContent();
             break;
         default:
             showErrorContent();
