@@ -1,0 +1,149 @@
+<?php
+
+$email = $pass = "";
+$emailErr = $passErr = $emailunknownErr = $passwrongErr = "";
+$valid = false;
+
+
+$userdatafile_path = 'users/users.txt';
+//call readUserDataFile to obtain the user data
+$userdata_array = readUserDataFile($userdatafile_path);
+
+function showLoginTitle() {
+    echo 'Login';
+}
+
+function showLoginHeader() {
+    echo 'Login';
+}
+
+function showLoginContent() {
+    global $email, $pass, $userdata_array;
+    global $valid;
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        validateLoginForm();
+        if ($valid) {
+            //display submitted data if $valid is true
+            if (checkLogin($email, $pass, $userdata_array)) {
+                session_start();
+                $_SESSION['email'] = $email;
+                echo $_SESSION['email'];
+                echo 'JUIST!';
+            } else {
+                showLoginForm();
+            }
+        } else {
+            //display contact form if $valid is false
+            showLoginForm();
+        }
+    } else {
+        //display contact form by default if not a POST request
+        showLoginForm();
+    }
+}
+
+function validateLoginForm() {
+    global $email, $pass;
+    global $emailErr, $passErr;
+    global $valid;
+
+    if (empty($_POST["email"])) {
+        $emailErr = "Email is vereist";
+    } else {
+        $email = test_input($_POST["email"]);
+    }
+
+    if (empty($_POST["pass"])) {
+        $passErr = "Wachtwoord is vereist";
+    } else {
+        $pass = test_input($_POST["pass"]);
+    }
+
+    if (empty($emailErr) && empty($passErr)) {
+        $valid = true;
+    }
+}
+
+function readUserDataFile($userdatafile_path) {
+    global $userdata_array;
+
+    //initialize an empty array to store the data
+    $userdata_array = array();
+
+    //open the file for reading or give error when unable to
+    $usersfile = fopen($userdatafile_path, 'r') or die("Unable to open file!");
+
+    while(!feof($usersfile)) {
+        $line = fgets($usersfile);
+        $values = explode('|', $line);
+
+        if (count($values) === 3) {
+            $userdata_array[] = array(
+                'email' => trim($values[0]),
+                'name' => trim($values[1]),
+                'password' => trim($values[2])
+            );
+        }
+    }
+
+    //close the file
+    fclose($usersfile);
+    return $userdata_array;
+}
+
+function checkLogin($email, $pass, $userdata_array) {
+    global $emailunknownErr, $passwrongErr;
+
+    foreach ($userdata_array as $userdata) {
+        if ($userdata['email'] === $email) {
+            if ($userdata['password'] === $pass) {
+                return true; //passwordmatch
+            } else {
+                $passwrongErr = "Onjuist wachtwoord";
+                return false; //no passwordmatch
+            }
+        }
+    }
+
+    $emailunknownErr = "Onbekend e-mailadres";
+    return false; //email not found
+}
+
+
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+function showLoginForm() {
+    global $email, $emailErr, $emailunknownErr, $pass, $passErr, $passwrongErr;
+
+    echo '
+    <form method="post" action="index.php">
+        <p><span class="error"><strong>* Vereist veld</strong></span></p>
+        <ul class="flex-outer">
+
+            <li>
+                <label for="email">E-mailadres:</label>
+                <input type="email" id="email" name="email" value="' . $email . '">
+                <span class="error">* ' . $emailErr . $emailunknownErr . '</span>
+            </li>
+
+            <li>
+                <label for="pass">Wachtwoord:</label>
+                <input type="password" id="pass" name="pass" value="' . $pass . '">
+                <span class="error">* ' . $passErr . $passwrongErr . '</span>
+            </li>
+
+            <li>
+            <button type="submit" name="page" value="login">Verstuur</button>
+            </li>
+
+        </ul>';
+}
+
+?>
