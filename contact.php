@@ -179,8 +179,10 @@ function showContactForm() {
             </li>
             
             <li>
-                <button type="submit" name="page" value="contact">Submit</button>
-            </li>';
+                <button type="submit" name="page" value="contact">Verstuur</button>
+            </li>
+            
+        </ul>';
 }
 
 ?>
