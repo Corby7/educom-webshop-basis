@@ -10,10 +10,8 @@ function showErrorHeader() {
 
 function showErrorContent() {
     echo '
-    <div class="content">
         <h1>Page Not Found</h1>
-        <p>The requested page could not be found. Please check the URL or return to the homepage.</p>
-    </div>';
+        <p>The requested page could not be found. Please check the URL or return to the homepage.</p>';
 }
 
 
