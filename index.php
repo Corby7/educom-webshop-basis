@@ -25,6 +25,10 @@ function getUrlVar($key, $default = '') {
     return isset($value) ? $value : $default;
 }
 
+//check array on key, if set; return key otherwise; return default empty
+function getArrayValue($array, $key, $default='') {
+    return isset($array[$key]) ? $array[$key] : $default;
+}
 
 function showResponsePage($page) {
     beginDocument();
