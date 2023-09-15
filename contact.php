@@ -47,52 +47,55 @@ function initializeContactData() {
 }
 
 function validateContactForm($data) {
+    // Extract values from the $data array
+    extract($data);
+
     if (empty($_POST["gender"]))  {
-        $data['genderErr'] = "Aanhef is vereist";
+        $genderErr = "Aanhef is vereist";
     } else {
-        $data['gender'] = test_input($_POST["gender"]);
+        $gender = test_input($_POST["gender"]);
     }
 
     if (empty($_POST["fname"])) {
-        $data['fnameErr'] = "Voornaam is vereist";
+        $fnameErr = "Voornaam is vereist";
     } else {
-        $data['fname'] = test_input($_POST["fname"]);
+        $fname = test_input($_POST["fname"]);
     }
     
     if (empty($_POST["lname"])) {
-        $data['lnameErr'] = "Achternaam is vereist";
+        $lnameErr = "Achternaam is vereist";
     } else {
-        $data['lname'] = test_input($_POST["lname"]);
+        $lname = test_input($_POST["lname"]);
     }
 
     if (empty($_POST["email"])) {
-        $data['emailErr'] = "Email is vereist";
+        $emailErr = "Email is vereist";
     } else {
-        $data['email'] = test_input($_POST["email"]);
+        $email = test_input($_POST["email"]);
     }
 
     if (empty($_POST["phone"])) {
-        $data['phoneErr'] = "Telefoonnummer is vereist";
+        $phoneErr = "Telefoonnummer is vereist";
     } else {
-        $data['phone'] = test_input($_POST["phone"]);
+        $phone = test_input($_POST["phone"]);
     }
 
     if (empty($_POST["preference"])) {
-        $data['preferenceErr'] = "Voorkeur is vereist";
+        $preferenceErr = "Voorkeur is vereist";
     } else {   
-        $data['preference'] = test_input($_POST["preference"]);
+        $preference = test_input($_POST["preference"]);
     }
 
     if (empty($_POST["message"])) {
-        $data['messageErr'] = "Bericht is vereist";
+        $messageErr = "Bericht is vereist";
     } else {
-        $data['message'] = test_input($_POST["message"]);
+        $message = test_input($_POST["message"]);
     }
 
     //check if there are any errors and set $valid accordingly
-    $data['valid'] = empty($data['genderErr']) && empty($data['fnameErr']) && empty($data['lnameErr']) && empty($data['emailErr']) && empty($data['phoneErr']) && empty($data['preferenceErr']) && empty($data['messageErr']);
+    $valid = empty($genderErr) && empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($phoneErr) && empty($preferenceErr) && empty($messageErr);
 
-    return $data;
+    return compact('gender', 'fname', 'lname', 'email', 'phone', 'preference', 'message', 'genderErr', 'fnameErr', 'lnameErr', 'emailErr', 'phoneErr', 'preferenceErr', 'messageErr', 'valid');
 }
 
 function test_input($userdata) {
@@ -114,18 +117,24 @@ function getSalutation($gender) {
 }
 
 function showContactThanks($userdata) {
+    // Extract values from the $userdata array
+    extract($userdata);
+
     echo '
-    <h2>Beste ' . getSalutation($userdata['gender']) . ' ' . $userdata['fname'] . ' ' . $userdata['lname'] . ', bedankt voor het invullen van uw gegevens!</h2>
+    <h2>Beste ' . getSalutation($gender) . ' ' . $fname . ' ' . $lname . ', bedankt voor het invullen van uw gegevens!</h2>
     <h3>Ik zal zo snel mogelijk contact met u opnemen. Ter bevestiging uw informatie:</h3>
     <ul class="submitted_userdata">
-        <li><strong>E-mailadres: </strong>' . $userdata['email'] . '</li>
-        <li><strong>Telefoonnummer: </strong>' . $userdata['phone'] . '</li>
-        <li><strong>Communicatievoorkeur: </strong>' . $userdata['preference'] . '</li>
-        <li><strong>Bericht: </strong>' . $userdata['message'] . '</li>
+        <li><strong>E-mailadres: </strong>' . $email . '</li>
+        <li><strong>Telefoonnummer: </strong>' . $phone . '</li>
+        <li><strong>Communicatievoorkeur: </strong>' . $preference . '</li>
+        <li><strong>Bericht: </strong>' . $message . '</li>
     </ul>';
 }
 
 function showContactForm($userdata) {
+    // Extract values from the $userdata array
+    extract($userdata);
+
     echo '
     <form method="post" action="index.php">
         <p><span class="error"><strong>* Vereist veld</strong></span></p>
@@ -135,56 +144,56 @@ function showContactForm($userdata) {
                 <label for="gender">Aanhef:</label>
                 <select name="gender" id="gender">
                 <option disabled selected value> -- maak een keuze -- </option>
-                <option value="male" ' . ($userdata['gender'] == "male" ? "selected" : "") . '>Dhr.</option>
-                <option value="female" ' . ($userdata['gender'] == "female" ? "selected" : "") . '>Mvr.</option>
-                <option value="unspecified" ' . ($userdata['gender'] == "unspecified" ? "selected" : "") . '>Anders</option>
+                <option value="male" ' . ($gender == "male" ? "selected" : "") . '>Dhr.</option>
+                <option value="female" ' . ($gender == "female" ? "selected" : "") . '>Mvr.</option>
+                <option value="unspecified" ' . ($gender == "unspecified" ? "selected" : "") . '>Anders</option>
                 </select>
-                <span class="error">* ' . $userdata['genderErr'] . '</span>
+                <span class="error">* ' . $genderErr . '</span>
             </li>
 
             <li>
                 <label for="fname">Voornaam:</label>
-                <input type="text" id="fname" name="fname" value="' . $userdata['fname'] . '">
-                <span class="error">* ' . $userdata['fnameErr'] . '</span>
+                <input type="text" id="fname" name="fname" value="' . $fname . '">
+                <span class="error">* ' . $fnameErr . '</span>
             </li>
             
             <li>
                 <label for="lname">Achternaam:</label>
-                <input type="text" id="lname" name="lname" value="' .$userdata['lname'] . '">
-                <span class="error">* ' . $userdata['lnameErr'] . '</span>
+                <input type="text" id="lname" name="lname" value="' .$lname . '">
+                <span class="error">* ' . $lnameErr . '</span>
             </li>
             
             <li>
                 <label for="email">E-mailadres:</label>
-                <input type="email" id="email" name="email" value="' . $userdata['email'] . '">
-                <span class="error">* ' . $userdata['emailErr'] . '</span>
+                <input type="email" id="email" name="email" value="' . $email . '">
+                <span class="error">* ' . $emailErr . '</span>
             </li>
             
             <li>
                 <label for="phone">Telefoonnummer:</label>
-                <input type="tel" id="phone" name="phone" value="' . $userdata['phone'] . '">
-                <span class="error">* ' . $userdata['phoneErr'] . '</span>
+                <input type="tel" id="phone" name="phone" value="' . $phone . '">
+                <span class="error">* ' . $phoneErr . '</span>
             </li>
             
             <li>
                 <legend>Communicatievoorkeur:</legend>
                 <ul class="flex-inner">
                     <li>
-                        <input type="radio" id="email" name="preference" value="email" ' . ($userdata['preference'] == "email" ? "checked" : "") . '>
+                        <input type="radio" id="email" name="preference" value="email" ' . ($preference == "email" ? "checked" : "") . '>
                         <label for="email">Email</label>
                     </li>
                     <li>
-                        <input type="radio" id="phone" name="preference" value="phone" ' . ($userdata['preference'] == "phone" ? "checked" : "") . '>
+                        <input type="radio" id="phone" name="preference" value="phone" ' . ($preference == "phone" ? "checked" : "") . '>
                         <label for="telefoon">Telefoon</label>
                     </li>
                 </ul>
-                <span class="error">* ' . $userdata['preferenceErr'] . '</span>
+                <span class="error">* ' . $preferenceErr . '</span>
             </li>
             
             <li>
                 <label for="bericht">Bericht:</label>
-                <textarea id="message" name="message" rows="5" cols="33">' . $userdata['message'] . '</textarea>
-                <span class="error">* ' . $userdata['messageErr'] . '</span>
+                <textarea id="message" name="message" rows="5" cols="33">' . $message . '</textarea>
+                <span class="error">* ' . $messageErr . '</span>
             </li>
             
             <li>
