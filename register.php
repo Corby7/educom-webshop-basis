@@ -1,8 +1,4 @@
 <?php
-$name = $fname = $lname = $email = $pass = $repeatpass = "";
-$fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = $emailknownErr = "";
-$valid = false;
-
 $userdatafile_path = 'users/users.txt';
 //call readUserDataFile to obtain the user data
 $userdata_array = readUserDataFile($userdatafile_path);
@@ -16,26 +12,24 @@ function showRegisterHeader() {
 }
 
 function showRegisterContent() {
-    global $valid, $email, $userdata_array, $pass, $repeatpass, $name;
-
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        validateRegisterForm();
-        if ($valid) {
+        $data = validateRegisterForm();
+        if ($data['valid']) {
             //if email is unknown, save new userdata, send to login
             if (checkUnknownEmail($email, $userdata_array)) {
             writeUserDataFile($email, $name, $pass);
             header('Location: index.php?page=login');
             //if email is known already, show error
             } else {
-                showRegisterForm();
+                showRegisterForm($data);
             }
         } else {
             //display register form if $valid is false
-            showRegisterForm();
+            showRegisterForm($data);
         }
     } else {
         //display register form by default if not a POST request
-        showRegisterForm();
+        showRegisterForm(array());
     }
 }
 
@@ -83,9 +77,9 @@ function checkUnknownEmail($email, $userdata_array) {
 }
 
 function validateRegisterForm() {
-    global $name, $fname, $lname, $email, $pass, $repeatpass;
-    global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr, $passcheckErr;
-    global $valid;
+    $name = $fname = $lname = $email = $pass = $repeatpass = '';
+    $fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = '';
+    $valid = false;
 
     if (empty($_POST["fname"])) {
         $fnameErr = "Voornaam is vereist";
@@ -118,7 +112,7 @@ function validateRegisterForm() {
     }
 
     if (empty($passErr) && empty($repeatpassErr)) {
-        validatePassword($pass, $repeatpass);
+        $passcheckErr = validatePassword($pass, $repeatpass);
     }
 
 //if no errors found set $valid to true
@@ -126,17 +120,15 @@ function validateRegisterForm() {
         $name = $fname . ' ' . $lname;
         $valid = true;
     }
+
+    return array('name' => $name, 'fname' => $fname, 'lname' => $lname, 'email' => $email, 'pass' => $pass, 'repeatpass' => $repeatpass, 'fnameErr' => $fnameErr, 'lnameErr' => $lnameErr, 'emailErr' => $emailErr, 'passErr' => $passErr, 'repeatpassErr' => $repeatpassErr, 'passcheckErr' => $passcheckErr, 'valid' => $valid);
 }
 
 function validatePassword($pass, $repeatpass) {
-    global $passcheckErr;
-
     if ($pass !== $repeatpass) {
-        $passcheckErr = "Wachtwoorden komen niet overeen";
-        return false;
+        return "Wachtwoorden komen niet overeen";
     }
-
-    return true;
+    return '';
 }
 
 function test_input($data) {
@@ -146,10 +138,7 @@ function test_input($data) {
     return $data;
 }
 
-function showRegisterForm() {
-    global $fname, $lname, $email, $pass, $repeatpass;
-    global $fnameErr, $lnameErr, $emailErr, $passErr, $repeatpassErr, $passcheckErr, $emailknownErr;
-
+function showRegisterForm($data) {
     echo '
     <form method="post" action="index.php">
         <p><span class="error"><strong>* Vereist veld</strong></span></p>
@@ -157,32 +146,32 @@ function showRegisterForm() {
 
             <li>
                 <label for="fname">Voornaam:</label>
-                <input type="text" id="fname" name="fname" value="' . $fname . '">
-                <span class="error">* ' . $fnameErr . '</span>
+                <input type="text" id="fname" name="fname" value="' . getArrayValue($data,'fname') . '">
+                <span class="error">* ' . getArrayValue($data,'fnameErr') . '</span>
             </li>
 
             <li>
                 <label for="lname">Achternaam:</label>
-                <input type="text" id="lname" name="lname" value="' . $lname . '">
-                <span class="error">* ' . $lnameErr . '</span>
+                <input type="text" id="lname" name="lname" value="' . getArrayValue($data,'lname') . '">
+                <span class="error">* ' . getArrayValue($data,'lnameErr') . '</span>
             </li>
 
             <li>
                 <label for="email">E-mailadres:</label>
-                <input type="email" id="email" name="email" value="' . $email . '">
-                <span class="error">* ' . $emailErr . $emailknownErr . '</span>
+                <input type="email" id="email" name="email" value="' . getArrayValue($data,'email') . '">
+                <span class="error">* ' . getArrayValue($data,'emailErr') . getArrayValue($data,'emailknownErr') . '</span>
             </li>
 
             <li>
                 <label for="pass">Wachtwoord:</label>
-                <input type="password" id="pass" name="pass" value="' . $pass . '">
-                <span class="error">* ' . $passErr . '</span>
+                <input type="password" id="pass" name="pass" value="' . getArrayValue($data,'pass') . '">
+                <span class="error">* ' . getArrayValue($data,'passErr') . '</span>
             </li>
 
             <li>
                 <label for="repeatpass">Herhaal wachtwoord:</label>
-                <input type="password" id="repeatpass" name="repeatpass" value="' . $repeatpass . '">
-                <span class="error">* ' . $repeatpassErr . $passcheckErr . '</span>
+                <input type="password" id="repeatpass" name="repeatpass" value="' . getArrayValue($data,'repeatpass') . '">
+                <span class="error">* ' . getArrayValue($data,'repeatpassErr') . getArrayValue($data,'passcheckErr') . '</span>
             </li>
 
             <li>

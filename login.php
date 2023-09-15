@@ -19,15 +19,6 @@ function showLoginContent() {
         if ($data['valid']) {
             $result = authenticateUser($data['email'], $data['pass']);
             processAuthentication($result);
-            // //display submitted data if $valid is true
-            // if (checkLogin($data['email'], $data['pass'], $userdata_array)) {
-            //     // session_start();
-            //     // $_SESSION['email'] = $email;
-            //     // echo $_SESSION['email'];
-            //     echo 'JUIST!';
-            // } else {
-            //     showLoginForm($data);
-            // }
         } else {
             //display contact form if $valid is false
             showLoginForm($data);
@@ -109,16 +100,14 @@ function authenticateUser($email, $pass) {
 
 function processAuthentication($result) {
 
-
     switch ($result['result']) {
         case RESULT_UNKNOWN_USER;
             $emailunknownErr = "E-mailadres is onbekend";
-            return ['emailunknownErr' => $emailunknownErr];
-            echo 'Unknown user';
+            showLoginForm(['emailunknownErr' => $emailunknownErr]);
             break;
         case RESULT_WRONG_PASSWORD;
             $wrongpassErr = "Wachtwoord is onjuist";
-            echo 'Wrong password';
+            showLoginForm(['wrongpassErr' => $wrongpassErr]);
             break;
         case RESULT_OK;
             echo 'Authentication succesfull';
@@ -159,7 +148,7 @@ function showLoginForm($data) {
             <li>
                 <label for="pass">Wachtwoord:</label>
                 <input type="password" id="pass" name="pass" value="' . getArrayValue($data,'pass') . '">
-                <span class="error">* ' . getArrayValue($data,'passErr') . getArrayValue($data,'passwrongErr') . '</span>
+                <span class="error">* ' . getArrayValue($data,'passErr') . getArrayValue($data,'wrongpassErr') . '</span>
             </li>
 
             <li>
