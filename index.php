@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 //MAIN APP
 $page = getRequestedPage();
@@ -94,6 +95,8 @@ function endDocument() {
 function showHeader($page) {
     echo '<header>' . PHP_EOL;
     echo '  <h1>';
+    //weghalen, tijdelijk voor check
+    echo $_SESSION["name"];
     switch ($page) {
         case 'home':
             showHomeHeader();
@@ -128,16 +131,27 @@ function showMenu() {
     echo '|'; 
     showMenuItem("contact", "CONTACT");
     echo '|'; 
-    showMenuItem("register", "REGISTER"); 
-    echo '|';
-    showMenuItem("login", "LOGIN"); 
-    echo '
+
+    require('sessionmanager.php');
+    if(isUserLoggedIn()) {
+        showMenuItem("home", "LOGOUT");
+    } else {
+        showMenuItem("register", "REGISTER"); 
+        echo '|';
+        showMenuItem("login", "LOGIN"); 
+    }
+
+    echo ';
         </ul>  
     </nav>'; 
 } 
 
 function showMenuItem($link, $text) {
     echo '<li><a href="index.php?page=' . $link . '">' . $text . '</a></li>';
+
+    if ($text == "logout") {
+        logoutUser();
+    }
 }
 
 function showContent($page) {
