@@ -54,7 +54,8 @@ function handleAuthentication($result, $inputdata) {
             $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
             break;
         case RESULT_OK;
-            echo 'Authentication succesfull';
+            $user = $result['user'];
+            loginUser($user['name']);
             return; //exit early, no need to call showLoginForm()
     }
 
