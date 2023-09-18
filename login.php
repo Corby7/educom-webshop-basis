@@ -14,7 +14,7 @@ function showLoginHeader() {
 }
 
 function showLoginContent() {
-    $inputdata = initializeContactData();
+    $inputdata = initializeLoginData();
     
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -34,7 +34,7 @@ function showLoginContent() {
     }
 }
 
-function initializeContactData() {
+function initializeLoginData() {
     return array(
         'email' => '',
         'emailErr' => '',
