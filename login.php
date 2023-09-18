@@ -1,9 +1,4 @@
 <?php
-//make session start here
-
-$userdatafile_path = 'users/users.txt';
-//call readUserDataFile to obtain the userdata
-$userdata_array = readUserDataFile($userdatafile_path);
 
 function showLoginTitle() {
     echo 'Login';
@@ -14,16 +9,20 @@ function showLoginHeader() {
 }
 
 function showLoginContent() {
+    $userdatafile_path = 'users/users.txt';
+    //call readUserDataFile to obtain the userdata
+    $userdata_array = readUserDataFile($userdatafile_path);
+
     $inputdata = initializeLoginData();
     
-
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inputdata = validateLoginForm($inputdata);
         if ($inputdata['valid']) {
             // extract values from the $inputdata array
             extract($inputdata);
-            $result = authenticateUser($email, $pass);
-            processAuthentication($result, $inputdata);
+
+            $result = authenticateUser($email, $pass, $userdata_array);
+            handleAuthentication($result, $inputdata);
         } else {
             //display contact form if $valid is false
             showLoginForm($inputdata);
@@ -32,6 +31,33 @@ function showLoginContent() {
         //display contact form by default if not a POST request
         showLoginForm($inputdata);
     }
+}
+
+function readUserDataFile($userdatafile_path) {
+    global $userdata_array;
+
+    //initialize an empty array to store the data
+    $userdata_array = array();
+
+    //open the file for reading or give error when unable to
+    $usersfile = fopen($userdatafile_path, 'r') or die("Unable to open file!");
+
+    while(!feof($usersfile)) {
+        $line = fgets($usersfile);
+        $values = explode('|', $line);
+
+        if (count($values) === 3) {
+            $userdata_array[] = array(
+                'email' => trim($values[0]),
+                'name' => trim($values[1]),
+                'pass' => trim($values[2])
+            );
+        }
+    }
+
+    //close the file
+    fclose($usersfile);
+    return $userdata_array;
 }
 
 function initializeLoginData() {
@@ -67,39 +93,19 @@ function validateLoginForm($inputdata) {
     return compact ('email', 'pass', 'emailErr', 'passErr', 'emailunknownErr', 'wrongpassErr', 'valid');
 }
 
-function readUserDataFile($userdatafile_path) {
-    global $userdata_array;
-
-    //initialize an empty array to store the data
-    $userdata_array = array();
-
-    //open the file for reading or give error when unable to
-    $usersfile = fopen($userdatafile_path, 'r') or die("Unable to open file!");
-
-    while(!feof($usersfile)) {
-        $line = fgets($usersfile);
-        $values = explode('|', $line);
-
-        if (count($values) === 3) {
-            $userdata_array[] = array(
-                'email' => trim($values[0]),
-                'name' => trim($values[1]),
-                'pass' => trim($values[2])
-            );
-        }
-    }
-
-    //close the file
-    fclose($usersfile);
-    return $userdata_array;
+function test_input($inputdata) {
+    $inputdata = trim($inputdata);
+    $inputdata = stripslashes($inputdata);
+    $inputdata = htmlspecialchars($inputdata);
+    return $inputdata;
 }
 
 define("RESULT_OK", 0);
 define("RESULT_UNKNOWN_USER", -1);
 define("RESULT_WRONG_PASSWORD", -2);
 
-function authenticateUser($email, $pass) {
-    $user = findUserByEmail($email);
+function authenticateUser($email, $pass, $userdata_array) {
+    $user = findUserByEmail($email, $userdata_array);
     
     if(empty($user)) {
         return ['result' => RESULT_UNKNOWN_USER]; //no user found with this email
@@ -112,7 +118,16 @@ function authenticateUser($email, $pass) {
     return ['result' => RESULT_OK, 'user' => $user]; //email matches password
 }
 
-function processAuthentication($result, $inputdata) {
+function findUserByEmail($email, $userdata_array) {
+    foreach ($userdata_array as $user) {
+        if ($user['email'] === $email) {
+            return $user;
+        }
+    }
+    return null; //return null if no user with the given email is found
+}
+
+function handleAuthentication($result, $inputdata) {
     switch ($result['result']) {
         case RESULT_UNKNOWN_USER;
             $inputdata['emailunknownErr'] = "E-mailadres is onbekend";
@@ -126,24 +141,6 @@ function processAuthentication($result, $inputdata) {
     }
 
     showLoginForm($inputdata);
-}
-
-function findUserByEmail($email) {
-    global $userdata_array;
-
-    foreach ($userdata_array as $user) {
-        if ($user['email'] === $email) {
-            return $user;
-        }
-    }
-    return null; //return null if no user with the given email is found
-}
-
-function test_input($inputdata) {
-    $inputdata = trim($inputdata);
-    $inputdata = stripslashes($inputdata);
-    $inputdata = htmlspecialchars($inputdata);
-    return $inputdata;
 }
 
 function showLoginForm($inputdata) {
