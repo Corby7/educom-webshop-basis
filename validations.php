@@ -181,4 +181,12 @@ function testInput($inputdata) {
     return $inputdata;
 }
 
+function validatePassword($pass, $repeatpass) {
+    if ($pass !== $repeatpass) {
+        return "Wachtwoorden komen niet overeen";
+    }
+    return '';
+}
+
+
 ?>

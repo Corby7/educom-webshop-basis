@@ -15,6 +15,7 @@ function showContactContent() {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inputdata = validateContactForm($inputdata);
         if ($inputdata['valid']) {
+            require('userservice.php');
             //display submitted inputdata if $valid is true
             showContactThanks($inputdata);
         } else {
@@ -40,17 +41,6 @@ function showContactThanks($inputdata) {
         <li><strong>Communicatievoorkeur: </strong>' . $preference . '</li>
         <li><strong>Bericht: </strong>' . $message . '</li>
     </ul>';
-}
-
-function getSalutation($gender) {
-    switch ($gender) {
-        case 'male':
-            return 'meneer';
-        case 'female':
-            return 'mevrouw';
-        default:
-            return;
-    }
 }
 
 function showContactForm($inputdata) {

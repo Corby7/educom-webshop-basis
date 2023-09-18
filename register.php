@@ -9,10 +9,6 @@ function showRegisterHeader() {
 }
 
 function showRegisterContent() {
-    $userdatafile_path = 'users/users.txt';
-    //call readUserDataFile to obtain the user data
-    $userdata_array = readUserDataFile($userdatafile_path);
-
     require('validations.php');
     $inputdata = initializeFormData('register');
 
@@ -22,6 +18,7 @@ function showRegisterContent() {
             // extract values from the $inputdata array
             extract($inputdata);
 
+            require('userservice.php');
             //check if email is known, i.e. not null
             $emailKnown = findUserByEmail($email, $userdata_array) !== null;
 
@@ -38,69 +35,6 @@ function showRegisterContent() {
         //display register form by default if not a POST request
         showRegisterForm($inputdata);
     }
-}
-
-function readUserDataFile($userdatafile_path) {
-    $userdata_array = array();
-    $usersfile = fopen($userdatafile_path, 'r') or die("Unable to open file!");
-
-    while (!feof($usersfile)) {
-        $line = fgets($usersfile);
-        $values = explode('|', $line);
-
-        if (count($values) === 3) {
-            $userdata_array[] = array(
-                'email' => trim($values[0]),
-                'name' => trim($values[1]),
-                'password' => trim($values[2])
-            );
-        }
-    }
-
-    //close the file
-    fclose($usersfile);
-    return $userdata_array;
-}
-
-function validatePassword($pass, $repeatpass) {
-    if ($pass !== $repeatpass) {
-        return "Wachtwoorden komen niet overeen";
-    }
-    return '';
-}
-
-function findUserByEmail($email, $userdata_array) {
-    foreach ($userdata_array as $user) {
-        if ($user['email'] === $email) {
-            return $user;
-        }
-    }
-    return null; //return null if no user with the given email is found
-}
-
-//if email is known already, show error
-function handleKnownEmail($inputdata) {
-    $inputdata['emailknownErr'] = "E-mailadres is reeds bekend";
-    showRegisterForm($inputdata);
-}
-
-//if email is unknown, save new userdata, send to login
-function handleUnknownEmail($email, $name, $pass) {
-    echo "email is not found";
-    writeUserDataFile($email, $name, $pass);
-    header('Location: index.php?page=login');
-    exit; //exit to prevent further execution
-}
-
-function writeUserDataFile($email, $name, $pass) {
-    // Specify the path to the .txt file
-    $userdatafile_path = 'users/users.txt';
-
-    //open userdata file, append new userdata in newline and close file
-    $usersfile = fopen($userdatafile_path, 'a') or die("Unable to open file!");
-    $newUserDatatxt = $email . '|' . $name . '|' . $pass . "\n";
-    fwrite($usersfile, $newUserDatatxt);
-    fclose($usersfile);
 }
 
 function showRegisterForm($inputdata) {
