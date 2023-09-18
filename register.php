@@ -1,7 +1,4 @@
 <?php
-$userdatafile_path = 'users/users.txt';
-//call readUserDataFile to obtain the user data
-$userdata_array = readUserDataFile($userdatafile_path);
 
 function showRegisterTitle() {
     echo 'Register';
@@ -12,16 +9,25 @@ function showRegisterHeader() {
 }
 
 function showRegisterContent() {
+    $userdatafile_path = 'users/users.txt';
+    //call readUserDataFile to obtain the user data
+    $userdata_array = readUserDataFile($userdatafile_path);
+
+    $data = initializeRegisterData();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $data = validateRegisterForm();
+        $data = validateRegisterForm($data);
         if ($data['valid']) {
-            //if email is unknown, save new userdata, send to login
-            if (checkUnknownEmail($email, $userdata_array)) {
-            writeUserDataFile($email, $name, $pass);
-            header('Location: index.php?page=login');
-            //if email is known already, show error
+            // extract values from the $inputdata array
+            extract($data);
+
+            //check if email is known, i.e. not null
+            $emailKnown = findUserByEmail($email, $userdata_array) !== null;
+
+            if ($emailKnown) {
+                handleKnownEmail($data);
             } else {
-                showRegisterForm($data);
+                handleUnknownEmail($email, $name, $pass);
             }
         } else {
             //display register form if $valid is false
@@ -29,7 +35,7 @@ function showRegisterContent() {
         }
     } else {
         //display register form by default if not a POST request
-        showRegisterForm(array());
+        showRegisterForm($data);
     }
 }
 
@@ -55,31 +61,28 @@ function readUserDataFile($userdatafile_path) {
     return $userdata_array;
 }
 
-function writeUserDataFile($email, $name, $pass) {
-    // Specify the path to the .txt file
-    $userdatafile_path = 'users/users.txt';
-
-    //open userdata file, append new userdata in newline and close file
-    $usersfile = fopen($userdatafile_path, 'a') or die("Unable to open file!");
-    $newUserDatatxt = $email . '|' . $name . '|' . $pass . "\n";
-    fwrite($usersfile, $newUserDatatxt);
-    fclose($usersfile);
+function initializeRegisterData() {
+    return array(
+        'name' => '',
+        'fname' => '',
+        'lname' => '',
+        'email' => '',
+        'pass' => '',
+        'repeatpass' => '',
+        'fnameErr' => '',
+        'lnameErr' => '',
+        'emailErr' => '',
+        'passErr' => '',
+        'repeatpassErr' => '',
+        'passcheckErr' => '',
+        'emailknownErr' => '',
+        'valid' => ''
+    );
 }
 
-function checkUnknownEmail($email, $userdata_array) {
-    foreach ($userdata_array as $userdata) {
-        if ($userdata['email'] === $email) {
-            return false; //match found
-        }
-    }
-
-    return true; //match not found
-}
-
-function validateRegisterForm() {
-    $name = $fname = $lname = $email = $pass = $repeatpass = '';
-    $fnameErr = $lnameErr = $emailErr = $passErr = $repeatpassErr = $passcheckErr = '';
-    $valid = false;
+function validateRegisterForm($data) {
+       // extract values from the $inputdata array
+       extract($data);
 
     if (empty($_POST["fname"])) {
         $fnameErr = "Voornaam is vereist";
@@ -121,7 +124,7 @@ function validateRegisterForm() {
         $valid = true;
     }
 
-    return array('name' => $name, 'fname' => $fname, 'lname' => $lname, 'email' => $email, 'pass' => $pass, 'repeatpass' => $repeatpass, 'fnameErr' => $fnameErr, 'lnameErr' => $lnameErr, 'emailErr' => $emailErr, 'passErr' => $passErr, 'repeatpassErr' => $repeatpassErr, 'passcheckErr' => $passcheckErr, 'valid' => $valid);
+    return compact ('name', 'fname', 'lname', 'email', 'pass', 'repeatpass', 'fnameErr', 'lnameErr', 'emailErr', 'passErr', 'repeatpassErr', 'passcheckErr', 'emailknownErr', 'valid');
 }
 
 function validatePassword($pass, $repeatpass) {
@@ -138,7 +141,44 @@ function test_input($data) {
     return $data;
 }
 
+function findUserByEmail($email, $userdata_array) {
+    foreach ($userdata_array as $user) {
+        if ($user['email'] === $email) {
+            return $user;
+        }
+    }
+    return null; //return null if no user with the given email is found
+}
+
+//if email is known already, show error
+function handleKnownEmail($data) {
+    $data['emailknownErr'] = "E-mailadres is reeds bekend";
+    showRegisterForm($data);
+}
+
+//if email is unknown, save new userdata, send to login
+function handleUnknownEmail($email, $name, $pass) {
+    echo "email is not found";
+    writeUserDataFile($email, $name, $pass);
+    header('Location: index.php?page=login');
+    exit; //exit to prevent further execution
+}
+
+function writeUserDataFile($email, $name, $pass) {
+    // Specify the path to the .txt file
+    $userdatafile_path = 'users/users.txt';
+
+    //open userdata file, append new userdata in newline and close file
+    $usersfile = fopen($userdatafile_path, 'a') or die("Unable to open file!");
+    $newUserDatatxt = $email . '|' . $name . '|' . $pass . "\n";
+    fwrite($usersfile, $newUserDatatxt);
+    fclose($usersfile);
+}
+
 function showRegisterForm($data) {
+    //extract values from the $userdata array
+    extract($data);
+
     echo '
     <form method="post" action="index.php">
         <p><span class="error"><strong>* Vereist veld</strong></span></p>
@@ -146,32 +186,32 @@ function showRegisterForm($data) {
 
             <li>
                 <label for="fname">Voornaam:</label>
-                <input type="text" id="fname" name="fname" value="' . getArrayValue($data,'fname') . '">
-                <span class="error">* ' . getArrayValue($data,'fnameErr') . '</span>
+                <input type="text" id="fname" name="fname" value="' . $fname . '">
+                <span class="error">* ' . $fnameErr . '</span>
             </li>
 
             <li>
                 <label for="lname">Achternaam:</label>
-                <input type="text" id="lname" name="lname" value="' . getArrayValue($data,'lname') . '">
-                <span class="error">* ' . getArrayValue($data,'lnameErr') . '</span>
+                <input type="text" id="lname" name="lname" value="' . $lname . '">
+                <span class="error">* ' . $lnameErr . '</span>
             </li>
 
             <li>
                 <label for="email">E-mailadres:</label>
-                <input type="email" id="email" name="email" value="' . getArrayValue($data,'email') . '">
-                <span class="error">* ' . getArrayValue($data,'emailErr') . getArrayValue($data,'emailknownErr') . '</span>
+                <input type="email" id="email" name="email" value="' . $email . '">
+                <span class="error">* ' . $emailErr . $emailknownErr . '</span>
             </li>
 
             <li>
                 <label for="pass">Wachtwoord:</label>
-                <input type="password" id="pass" name="pass" value="' . getArrayValue($data,'pass') . '">
-                <span class="error">* ' . getArrayValue($data,'passErr') . '</span>
+                <input type="password" id="pass" name="pass" value="' . $pass . '">
+                <span class="error">* ' . $passErr . '</span>
             </li>
 
             <li>
                 <label for="repeatpass">Herhaal wachtwoord:</label>
-                <input type="password" id="repeatpass" name="repeatpass" value="' . getArrayValue($data,'repeatpass') . '">
-                <span class="error">* ' . getArrayValue($data,'repeatpassErr') . getArrayValue($data,'passcheckErr') . '</span>
+                <input type="password" id="repeatpass" name="repeatpass" value="' . $repeatpass . '">
+                <span class="error">* ' . $repeatpassErr . $passcheckErr . '</span>
             </li>
 
             <li>
