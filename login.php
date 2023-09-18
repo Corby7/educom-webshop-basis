@@ -2,7 +2,7 @@
 //make session start here
 
 $userdatafile_path = 'users/users.txt';
-//call readUserDataFile to obtain the user data
+//call readUserDataFile to obtain the userdata
 $userdata_array = readUserDataFile($userdatafile_path);
 
 function showLoginTitle() {
@@ -14,25 +14,41 @@ function showLoginHeader() {
 }
 
 function showLoginContent() {
+    $inputdata = initializeContactData();
+    
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $data = validateLoginForm();
-        if ($data['valid']) {
-            $result = authenticateUser($data['email'], $data['pass']);
-            processAuthentication($result);
+        $inputdata = validateLoginForm($inputdata);
+        if ($inputdata['valid']) {
+            // extract values from the $inputdata array
+            extract($inputdata);
+            $result = authenticateUser($email, $pass);
+            processAuthentication($result, $inputdata);
         } else {
             //display contact form if $valid is false
-            showLoginForm($data);
+            showLoginForm($inputdata);
         }
     } else {
         //display contact form by default if not a POST request
-        showLoginForm(array());
+        showLoginForm($inputdata);
     }
 }
 
-function validateLoginForm() {
-    $email = $pass = '';
-    $emailErr = $passErr = '';
-    $valid = false;
+function initializeContactData() {
+    return array(
+        'email' => '',
+        'emailErr' => '',
+        'emailunknownErr' => '',
+        'pass' => '',
+        'passErr' => '',
+        'wrongpassErr' => '',
+        'valid' => ''
+    );
+}
+
+function validateLoginForm($inputdata) {
+    // extract values from the $inputdata array
+    extract($inputdata);
 
     if (empty($_POST["email"])) {
         $emailErr = "Email is vereist";
@@ -46,11 +62,9 @@ function validateLoginForm() {
         $pass = test_input($_POST["pass"]);
     }
 
-    if (empty($emailErr) && empty($passErr)) {
-        $valid = true;
-    }
+    $valid = empty($emailErr) && empty($passErr);
 
-    return array('email' => $email, 'emailErr' => $emailErr, 'pass' => $pass, 'passErr' => $passErr, 'valid' => $valid);
+    return compact ('email', 'pass', 'emailErr', 'passErr', 'emailunknownErr', 'wrongpassErr', 'valid');
 }
 
 function readUserDataFile($userdatafile_path) {
@@ -98,21 +112,20 @@ function authenticateUser($email, $pass) {
     return ['result' => RESULT_OK, 'user' => $user]; //email matches password
 }
 
-function processAuthentication($result) {
-
+function processAuthentication($result, $inputdata) {
     switch ($result['result']) {
         case RESULT_UNKNOWN_USER;
-            $emailunknownErr = "E-mailadres is onbekend";
-            showLoginForm(['emailunknownErr' => $emailunknownErr]);
+            $inputdata['emailunknownErr'] = "E-mailadres is onbekend";
             break;
         case RESULT_WRONG_PASSWORD;
-            $wrongpassErr = "Wachtwoord is onjuist";
-            showLoginForm(['wrongpassErr' => $wrongpassErr]);
+            $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
             break;
         case RESULT_OK;
             echo 'Authentication succesfull';
-            break;
+            return; //exit early, no need to call showLoginForm()
     }
+
+    showLoginForm($inputdata);
 }
 
 function findUserByEmail($email) {
@@ -126,14 +139,17 @@ function findUserByEmail($email) {
     return null; //return null if no user with the given email is found
 }
 
-function test_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+function test_input($inputdata) {
+    $inputdata = trim($inputdata);
+    $inputdata = stripslashes($inputdata);
+    $inputdata = htmlspecialchars($inputdata);
+    return $inputdata;
 }
 
-function showLoginForm($data) {
+function showLoginForm($inputdata) {
+    //extract values from the $userdata array
+    extract($inputdata);
+
     echo '
     <form method="post" action="index.php">
         <p><span class="error"><strong>* Vereist veld</strong></span></p>
@@ -141,14 +157,14 @@ function showLoginForm($data) {
 
             <li>
                 <label for="email">E-mailadres:</label>
-                <input type="email" id="email" name="email" value="' . getArrayValue($data,'email') . '">
-                <span class="error">* ' . getArrayValue($data,'emailErr') . getArrayValue($data,'emailunknownErr') . '</span>
+                <input type="email" id="email" name="email" value="' . $email . '">
+                <span class="error">* ' . $emailErr . $emailunknownErr . '</span>
             </li>
 
             <li>
                 <label for="pass">Wachtwoord:</label>
-                <input type="password" id="pass" name="pass" value="' . getArrayValue($data,'pass') . '">
-                <span class="error">* ' . getArrayValue($data,'passErr') . getArrayValue($data,'wrongpassErr') . '</span>
+                <input type="password" id="pass" name="pass" value="' . $pass . '">
+                <span class="error">* ' . $passErr . $wrongpassErr . '</span>
             </li>
 
             <li>
