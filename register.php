@@ -81,37 +81,33 @@ function initializeRegisterData() {
 }
 
 function validateRegisterForm($inputdata) {
-       // extract values from the $inputdata array
-       extract($inputdata);
+    // extract values from the $inputdata array
+    extract($inputdata);
 
-    if (empty($_POST["fname"])) {
+    //retrieve and sanitize the fields from $_POST
+    $fname = getPostVar("fname");
+    if (empty($fname)) {
         $fnameErr = "Voornaam is vereist";
-    } else {
-        $fname = test_input($_POST["fname"]);
     }
 
-    if (empty($_POST["lname"])) {
+    $lname = getPostVar("lname");
+    if (empty($lname)) {
         $lnameErr = "Achternaam is vereist";
-    } else {
-        $lname = test_input($_POST["lname"]);
     }
 
-    if (empty($_POST["email"])) {
+    $email = getPostVar("email");
+    if (empty($email)) {
         $emailErr = "Email is vereist";
-    } else {
-        $email = test_input($_POST["email"]);
     }
 
-    if (empty($_POST["pass"])) {
+    $pass = getPostVar("pass");
+    if (empty($pass)) {
         $passErr = "Wachtwoord is vereist";
-    } else {
-        $pass = test_input($_POST["pass"]);
     }
 
-    if (empty($_POST["repeatpass"])) {
+    $repeatpass = getPostVar("repeatpass");
+    if (empty($repeatpass)) {
         $repeatpassErr = "Wachtwoord herhalen is vereist";
-    } else {
-        $repeatpass = test_input($_POST["repeatpass"]);
     }
 
     if (empty($passErr) && empty($repeatpassErr)) {

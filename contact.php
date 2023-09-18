@@ -50,47 +50,42 @@ function validateContactForm($inputdata) {
     // Extract values from the $inputdata array
     extract($inputdata);
 
-    if (empty($_POST["gender"]))  {
+    //retrieve and sanitize the fields from $_POST
+    $gender = test_input(getPostVar("gender"));
+    if (empty($gender)) {
         $genderErr = "Aanhef is vereist";
-    } else {
-        $gender = test_input($_POST["gender"]);
-    }
-
-    if (empty($_POST["fname"])) {
-        $fnameErr = "Voornaam is vereist";
-    } else {
-        $fname = test_input($_POST["fname"]);
     }
     
-    if (empty($_POST["lname"])) {
+    $fname = test_input(getPostVar("fname"));
+    if (empty($fname)) {
+        $fnameErr = "Voornaam is vereist";
+    }
+    
+    $lname = test_input(getPostVar("lname"));
+    if (empty($lname)) {
         $lnameErr = "Achternaam is vereist";
-    } else {
-        $lname = test_input($_POST["lname"]);
     }
-
-    if (empty($_POST["email"])) {
+    
+    $email = test_input(getPostVar("email"));
+    if (empty($email)) {
         $emailErr = "Email is vereist";
-    } else {
-        $email = test_input($_POST["email"]);
     }
-
-    if (empty($_POST["phone"])) {
+    
+    $phone = test_input(getPostVar("phone"));
+    if (empty($phone)) {
         $phoneErr = "Telefoonnummer is vereist";
-    } else {
-        $phone = test_input($_POST["phone"]);
     }
-
-    if (empty($_POST["preference"])) {
+    
+    $preference = test_input(getPostVar("preference"));
+    if (empty($preference)) {
         $preferenceErr = "Voorkeur is vereist";
-    } else {   
-        $preference = test_input($_POST["preference"]);
     }
-
-    if (empty($_POST["message"])) {
+    
+    $message = test_input(getPostVar("message"));
+    if (empty($message)) {
         $messageErr = "Bericht is vereist";
-    } else {
-        $message = test_input($_POST["message"]);
     }
+    
 
     //check if there are any errors and set $valid accordingly
     $valid = empty($genderErr) && empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($phoneErr) && empty($preferenceErr) && empty($messageErr);

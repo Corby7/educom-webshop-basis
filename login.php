@@ -76,16 +76,15 @@ function validateLoginForm($inputdata) {
     // extract values from the $inputdata array
     extract($inputdata);
 
-    if (empty($_POST["email"])) {
+    //retrieve and sanitize the fields from $_POST
+    $email = getPostVar("email");
+    if (empty($email)) {
         $emailErr = "Email is vereist";
-    } else {
-        $email = test_input($_POST["email"]);
     }
 
-    if (empty($_POST["pass"])) {
+    $pass = getPostVar("pass");
+    if (empty($pass)) {
         $passErr = "Wachtwoord is vereist";
-    } else {
-        $pass = test_input($_POST["pass"]);
     }
 
     $valid = empty($emailErr) && empty($passErr);
