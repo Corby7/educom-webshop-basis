@@ -13,7 +13,8 @@ function showLoginContent() {
     //call readUserDataFile to obtain the userdata
     $userdata_array = readUserDataFile($userdatafile_path);
 
-    $inputdata = initializeLoginData();
+    require('validations.php');
+    $inputdata = initializeFormData('login');
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inputdata = validateLoginForm($inputdata);
@@ -58,45 +59,6 @@ function readUserDataFile($userdatafile_path) {
     //close the file
     fclose($usersfile);
     return $userdata_array;
-}
-
-function initializeLoginData() {
-    return array(
-        'email' => '',
-        'emailErr' => '',
-        'emailunknownErr' => '',
-        'pass' => '',
-        'passErr' => '',
-        'wrongpassErr' => '',
-        'valid' => ''
-    );
-}
-
-function validateLoginForm($inputdata) {
-    // extract values from the $inputdata array
-    extract($inputdata);
-
-    //retrieve and sanitize the fields from $_POST
-    $email = getPostVar("email");
-    if (empty($email)) {
-        $emailErr = "Email is vereist";
-    }
-
-    $pass = getPostVar("pass");
-    if (empty($pass)) {
-        $passErr = "Wachtwoord is vereist";
-    }
-
-    $valid = empty($emailErr) && empty($passErr);
-
-    return compact ('email', 'pass', 'emailErr', 'passErr', 'emailunknownErr', 'wrongpassErr', 'valid');
-}
-
-function test_input($inputdata) {
-    $inputdata = trim($inputdata);
-    $inputdata = stripslashes($inputdata);
-    $inputdata = htmlspecialchars($inputdata);
-    return $inputdata;
 }
 
 define("RESULT_OK", 0);

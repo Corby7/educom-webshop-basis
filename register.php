@@ -13,7 +13,8 @@ function showRegisterContent() {
     //call readUserDataFile to obtain the user data
     $userdata_array = readUserDataFile($userdatafile_path);
 
-    $inputdata = initializeRegisterData();
+    require('validations.php');
+    $inputdata = initializeFormData('register');
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inputdata = validateRegisterForm($inputdata);
@@ -61,80 +62,11 @@ function readUserDataFile($userdatafile_path) {
     return $userdata_array;
 }
 
-function initializeRegisterData() {
-    return array(
-        'name' => '',
-        'fname' => '',
-        'lname' => '',
-        'email' => '',
-        'pass' => '',
-        'repeatpass' => '',
-        'fnameErr' => '',
-        'lnameErr' => '',
-        'emailErr' => '',
-        'passErr' => '',
-        'repeatpassErr' => '',
-        'passcheckErr' => '',
-        'emailknownErr' => '',
-        'valid' => ''
-    );
-}
-
-function validateRegisterForm($inputdata) {
-    // extract values from the $inputdata array
-    extract($inputdata);
-
-    //retrieve and sanitize the fields from $_POST
-    $fname = getPostVar("fname");
-    if (empty($fname)) {
-        $fnameErr = "Voornaam is vereist";
-    }
-
-    $lname = getPostVar("lname");
-    if (empty($lname)) {
-        $lnameErr = "Achternaam is vereist";
-    }
-
-    $email = getPostVar("email");
-    if (empty($email)) {
-        $emailErr = "Email is vereist";
-    }
-
-    $pass = getPostVar("pass");
-    if (empty($pass)) {
-        $passErr = "Wachtwoord is vereist";
-    }
-
-    $repeatpass = getPostVar("repeatpass");
-    if (empty($repeatpass)) {
-        $repeatpassErr = "Wachtwoord herhalen is vereist";
-    }
-
-    if (empty($passErr) && empty($repeatpassErr)) {
-        $passcheckErr = validatePassword($pass, $repeatpass);
-    }
-
-//if no errors found set $valid to true
-    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr) && empty($passcheckErr)) {
-        $name = $fname . ' ' . $lname;
-        $valid = true;
-    }
-
-    return compact ('name', 'fname', 'lname', 'email', 'pass', 'repeatpass', 'fnameErr', 'lnameErr', 'emailErr', 'passErr', 'repeatpassErr', 'passcheckErr', 'emailknownErr', 'valid');
-}
-
 function validatePassword($pass, $repeatpass) {
     if ($pass !== $repeatpass) {
         return "Wachtwoorden komen niet overeen";
     }
     return '';
-}
-
-function test_input($inputdata) {
-    $inputdata = trim($inputdata);
-    $inputdata = stripslashes($inputdata);
-    $inputdata = htmlspecialchars($inputdata);
-    return $inputdata;
 }
 
 function findUserByEmail($email, $userdata_array) {

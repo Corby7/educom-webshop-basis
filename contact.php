@@ -9,7 +9,8 @@ function showContactHeader() {
 }
 
 function showContactContent() {
-    $inputdata = initializeContactData();
+    require('validations.php');
+    $inputdata = initializeFormData('contact');
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inputdata = validateContactForm($inputdata);
@@ -24,80 +25,6 @@ function showContactContent() {
         //display contact form by default if not a POST request
         showContactForm($inputdata);
     }
-}
-
-function initializeContactData() {
-    return array(
-        'gender' => '',
-        'fname' => '',
-        'lname' => '',
-        'email' => '',
-        'phone' => '',
-        'preference' => '',
-        'message' => '',
-        'genderErr' => '',
-        'fnameErr' => '',
-        'lnameErr' => '',
-        'emailErr' => '',
-        'phoneErr' => '',
-        'preferenceErr' => '',
-        'messageErr' => '',
-        'valid' => ''
-    );
-}
-
-function validateContactForm($inputdata) {
-    // Extract values from the $inputdata array
-    extract($inputdata);
-
-    //retrieve and sanitize the fields from $_POST
-    $gender = test_input(getPostVar("gender"));
-    if (empty($gender)) {
-        $genderErr = "Aanhef is vereist";
-    }
-    
-    $fname = test_input(getPostVar("fname"));
-    if (empty($fname)) {
-        $fnameErr = "Voornaam is vereist";
-    }
-    
-    $lname = test_input(getPostVar("lname"));
-    if (empty($lname)) {
-        $lnameErr = "Achternaam is vereist";
-    }
-    
-    $email = test_input(getPostVar("email"));
-    if (empty($email)) {
-        $emailErr = "Email is vereist";
-    }
-    
-    $phone = test_input(getPostVar("phone"));
-    if (empty($phone)) {
-        $phoneErr = "Telefoonnummer is vereist";
-    }
-    
-    $preference = test_input(getPostVar("preference"));
-    if (empty($preference)) {
-        $preferenceErr = "Voorkeur is vereist";
-    }
-    
-    $message = test_input(getPostVar("message"));
-    if (empty($message)) {
-        $messageErr = "Bericht is vereist";
-    }
-    
-
-    //check if there are any errors and set $valid accordingly
-    $valid = empty($genderErr) && empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($phoneErr) && empty($preferenceErr) && empty($messageErr);
-
-    return compact('gender', 'fname', 'lname', 'email', 'phone', 'preference', 'message', 'genderErr', 'fnameErr', 'lnameErr', 'emailErr', 'phoneErr', 'preferenceErr', 'messageErr', 'valid');
-}
-
-function test_input($inputdata) {
-    $inputdata = trim($inputdata);
-    $inputdata = stripslashes($inputdata);
-    $inputdata = htmlspecialchars($inputdata);
-    return $inputdata;
 }
 
 function showContactThanks($inputdata) {
