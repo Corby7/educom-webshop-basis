@@ -188,5 +188,4 @@ function validatePassword($pass, $repeatpass) {
     return '';
 }
 
-
 ?>

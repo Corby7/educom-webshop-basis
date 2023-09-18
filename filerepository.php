@@ -1,12 +1,13 @@
 <?php
-    define("USER_DATA_PATH", 'users/users.txt');
-  
-    //call readUserDataFile to obtain the user data
-    $userdata_array = readUserDataFile(USER_DATA_PATH);
 
-function readUserDataFile($userdatafile_path) {
+define("USER_DATA_PATH", 'users/users.txt');
+
+//call readUserDataFile to obtain the user data
+$userdata_array = readUserDataFile(USER_DATA_PATH);
+
+function readUserDataFile($userdatapath) {
     $userdata_array = array();
-    $usersfile = fopen($userdatafile_path, 'r') or die("Unable to open file!");
+    $usersfile = fopen($userdatapath, 'r') or die("Unable to open file!");
 
     while (!feof($usersfile)) {
         $line = fgets($usersfile);

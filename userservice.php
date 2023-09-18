@@ -61,5 +61,4 @@ function handleAuthentication($result, $inputdata) {
     showLoginForm($inputdata);
 }
 
-
 ?>
