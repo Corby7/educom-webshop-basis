@@ -13,29 +13,29 @@ function showRegisterContent() {
     //call readUserDataFile to obtain the user data
     $userdata_array = readUserDataFile($userdatafile_path);
 
-    $data = initializeRegisterData();
+    $inputdata = initializeRegisterData();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $data = validateRegisterForm($data);
-        if ($data['valid']) {
+        $inputdata = validateRegisterForm($inputdata);
+        if ($inputdata['valid']) {
             // extract values from the $inputdata array
-            extract($data);
+            extract($inputdata);
 
             //check if email is known, i.e. not null
             $emailKnown = findUserByEmail($email, $userdata_array) !== null;
 
             if ($emailKnown) {
-                handleKnownEmail($data);
+                handleKnownEmail($inputdata);
             } else {
                 handleUnknownEmail($email, $name, $pass);
             }
         } else {
             //display register form if $valid is false
-            showRegisterForm($data);
+            showRegisterForm($inputdata);
         }
     } else {
         //display register form by default if not a POST request
-        showRegisterForm($data);
+        showRegisterForm($inputdata);
     }
 }
 
@@ -80,9 +80,9 @@ function initializeRegisterData() {
     );
 }
 
-function validateRegisterForm($data) {
+function validateRegisterForm($inputdata) {
        // extract values from the $inputdata array
-       extract($data);
+       extract($inputdata);
 
     if (empty($_POST["fname"])) {
         $fnameErr = "Voornaam is vereist";
@@ -134,11 +134,11 @@ function validatePassword($pass, $repeatpass) {
     return '';
 }
 
-function test_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+function test_input($inputdata) {
+    $inputdata = trim($inputdata);
+    $inputdata = stripslashes($inputdata);
+    $inputdata = htmlspecialchars($inputdata);
+    return $inputdata;
 }
 
 function findUserByEmail($email, $userdata_array) {
@@ -151,9 +151,9 @@ function findUserByEmail($email, $userdata_array) {
 }
 
 //if email is known already, show error
-function handleKnownEmail($data) {
-    $data['emailknownErr'] = "E-mailadres is reeds bekend";
-    showRegisterForm($data);
+function handleKnownEmail($inputdata) {
+    $inputdata['emailknownErr'] = "E-mailadres is reeds bekend";
+    showRegisterForm($inputdata);
 }
 
 //if email is unknown, save new userdata, send to login
@@ -175,9 +175,9 @@ function writeUserDataFile($email, $name, $pass) {
     fclose($usersfile);
 }
 
-function showRegisterForm($data) {
+function showRegisterForm($inputdata) {
     //extract values from the $userdata array
-    extract($data);
+    extract($inputdata);
 
     echo '
     <form method="post" action="index.php">
