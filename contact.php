@@ -9,20 +9,20 @@ function showContactHeader() {
 }
 
 function showContactContent() {
-    $userdata = initializeContactData();
+    $inputdata = initializeContactData();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $userdata = validateContactForm($userdata);
-        if ($userdata['valid']) {
-            //display submitted userdata if $valid is true
-            showContactThanks($userdata);
+        $inputdata = validateContactForm($inputdata);
+        if ($inputdata['valid']) {
+            //display submitted inputdata if $valid is true
+            showContactThanks($inputdata);
         } else {
             //display contact form if $valid is false
-            showContactForm($userdata);
+            showContactForm($inputdata);
         }
     } else {
         //display contact form by default if not a POST request
-        showContactForm($userdata);
+        showContactForm($inputdata);
     }
 }
 
@@ -46,9 +46,9 @@ function initializeContactData() {
     );
 }
 
-function validateContactForm($data) {
-    // Extract values from the $data array
-    extract($data);
+function validateContactForm($inputdata) {
+    // Extract values from the $inputdata array
+    extract($inputdata);
 
     if (empty($_POST["gender"]))  {
         $genderErr = "Aanhef is vereist";
@@ -98,11 +98,11 @@ function validateContactForm($data) {
     return compact('gender', 'fname', 'lname', 'email', 'phone', 'preference', 'message', 'genderErr', 'fnameErr', 'lnameErr', 'emailErr', 'phoneErr', 'preferenceErr', 'messageErr', 'valid');
 }
 
-function test_input($userdata) {
-    $userdata = trim($userdata);
-    $userdata = stripslashes($userdata);
-    $userdata = htmlspecialchars($userdata);
-    return $userdata;
+function test_input($inputdata) {
+    $inputdata = trim($inputdata);
+    $inputdata = stripslashes($inputdata);
+    $inputdata = htmlspecialchars($inputdata);
+    return $inputdata;
 }
 
 function getSalutation($gender) {
@@ -116,9 +116,9 @@ function getSalutation($gender) {
     }
 }
 
-function showContactThanks($userdata) {
-    // Extract values from the $userdata array
-    extract($userdata);
+function showContactThanks($inputdata) {
+    // Extract values from the $inputdata array
+    extract($inputdata);
 
     echo '
     <h2>Beste ' . getSalutation($gender) . ' ' . $fname . ' ' . $lname . ', bedankt voor het invullen van uw gegevens!</h2>
@@ -131,9 +131,9 @@ function showContactThanks($userdata) {
     </ul>';
 }
 
-function showContactForm($userdata) {
-    // Extract values from the $userdata array
-    extract($userdata);
+function showContactForm($inputdata) {
+    // Extract values from the $inputdata array
+    extract($inputdata);
 
     echo '
     <form method="post" action="index.php">
