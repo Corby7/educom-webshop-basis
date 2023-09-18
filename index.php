@@ -25,19 +25,6 @@ function getUrlVar($key, $default = '') {
     return isset($value) ? $value : $default;
 }
 
-//check array on key, if set; return key otherwise; return default empty
-// function getArrayValue($array, $key, $default='') {
-//     return isset($array[$key]) ? $array[$key] : $default;
-// }
-
-function getArrayValues($array, $default = '5') {
-    $result = array();
-    foreach ($array as $key => $value) {
-        $result[$key] = isset($array[$key]) ? $array[$key] : $default;
-    }
-    return $result;
-}
-
 function showResponsePage($page) {
     beginDocument();
     showHeadSection($page);
