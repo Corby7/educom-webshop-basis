@@ -168,7 +168,8 @@ function showLoginForm($inputdata) {
             <button type="submit" name="page" value="login">Verstuur</button>
             </li>
 
-        </ul>';
+        </ul>
+    </form>';
 }
 
 ?>

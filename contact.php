@@ -105,17 +105,6 @@ function test_input($inputdata) {
     return $inputdata;
 }
 
-function getSalutation($gender) {
-    switch ($gender) {
-        case 'male':
-            return 'meneer';
-        case 'female':
-            return 'mevrouw';
-        default:
-            return;
-    }
-}
-
 function showContactThanks($inputdata) {
     // Extract values from the $inputdata array
     extract($inputdata);
@@ -129,6 +118,17 @@ function showContactThanks($inputdata) {
         <li><strong>Communicatievoorkeur: </strong>' . $preference . '</li>
         <li><strong>Bericht: </strong>' . $message . '</li>
     </ul>';
+}
+
+function getSalutation($gender) {
+    switch ($gender) {
+        case 'male':
+            return 'meneer';
+        case 'female':
+            return 'mevrouw';
+        default:
+            return;
+    }
 }
 
 function showContactForm($inputdata) {
@@ -200,7 +200,8 @@ function showContactForm($inputdata) {
                 <button type="submit" name="page" value="contact">Verstuur</button>
             </li>
             
-        </ul>';
+        </ul>
+    </form>';
 }
 
 ?>

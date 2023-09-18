@@ -218,7 +218,8 @@ function showRegisterForm($inputdata) {
                 <button type="submit" name="page" value="register">Verstuur</button>
             </li>
 
-        </ul>';
+        </ul>
+    </form>';
 }
 
 ?>
