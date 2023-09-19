@@ -1,8 +1,23 @@
 <?php
 
+session_start(); 
+
+require('sessionmanager.php');
+require('validations.php');
+require('userservice.php');
+require('filerepository.php');
+
+require('home.php');
+require('about.php');
+require('contact.php');
+require('register.php');
+require('login.php');
+require('error.php');
+
 //MAIN APP
 $page = getRequestedPage();
-showResponsePage($page);
+$inputdata = processRequest($page);
+showResponsePage($inputdata);
 
 //FUNCTIONS
 function getRequestedPage() {
@@ -11,7 +26,8 @@ function getRequestedPage() {
         $requested_page = getPostVar('page', 'home');
     } else {
         $requested_page = getUrlVar('page', 'home');
-    } 
+    }
+
     return $requested_page;
 }
 
@@ -25,10 +41,69 @@ function getUrlVar($key, $default = '') {
     return isset($value) ? $value : $default;
 }
 
-function showResponsePage($page) {
+//working on this
+function processRequest($page) {
+    $inputdata = initializeFormData($page);
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        switch($page) {
+            case 'contact':
+                $inputdata = validateContactForm($inputdata);
+                if($inputdata['valid']) {
+                    $page = "thanks";
+                }
+                break;
+
+            case 'register':
+                $inputdata = validateRegisterForm($inputdata);
+                if ($inputdata['valid']) {
+                    // extract values from the $inputdata array
+                    extract($inputdata);
+
+                    saveUser($email, $name, $pass);
+                    $page = "login";
+                }
+                break;
+
+            case 'login':
+                $inputdata = validateLoginForm($inputdata);
+                if ($inputdata['valid']) {
+                    // Extract values from the $inputdata array
+                    extract($inputdata);
+
+                    $result = authenticateUser($email, $pass);
+
+                    // Check authentication result
+                    if ($result['result'] === RESULT_OK) {
+                        // Authentication is successful
+                        // You can perform actions here or set a session variable to indicate login
+                        // For example, you can set a session variable like $_SESSION['user'] = $result['user'];
+                        // Then, you can redirect the user to the home page
+                        $_SESSION['user'] = $result['user'];
+                        $page = "home";
+                    } elseif ($result['result'] === RESULT_UNKNOWN_USER) {
+                        // Handle unknown user error
+                        $inputdata['emailunknownErr'] = "E-mailadres is onbekend";
+                    } elseif ($result['result'] === RESULT_WRONG_PASSWORD) {
+                        // Handle wrong password error
+                        $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
+                    }
+                }
+                break;
+        }
+        $inputdata['page'] = $page;
+        return $inputdata;
+    } else {
+        //display form by default if not a POST request
+        $inputdata['page'] = $page;
+        return $inputdata;
+    }
+}
+
+function showResponsePage($inputdata) {
     beginDocument();
-    showHeadSection($page);
-    showBodySection($page);
+    showHeadSection($inputdata);
+    showBodySection($inputdata);
     endDocument();
 }
 
@@ -38,50 +113,44 @@ function beginDocument() {
     <html>';
 }
 
-function showHeadSection($page) {
+function showHeadSection($inputdata) {
     echo '    <head>' . PHP_EOL;
     echo '<link rel="stylesheet" href="CSS/style.css">';
-    showTitle($page);
+    showTitle($inputdata);
     echo '    </head>' . PHP_EOL;
 }
 
-function showTitle($page) {
+function showTitle($inputdata) {
     echo '<title>';
-        switch ($page) {
+        switch ($inputdata['page']) {
             case 'home':
-                require('home.php');
                 showHomeTitle();
                 break;
             case 'about':
-                require('about.php');
                 showAboutTitle();
                 break;
             case 'contact':
-                require('contact.php');
                 showContactTitle();
                 break;
             case 'register':
-                require('register.php');
                 showRegisterTitle();
                 break;
             case 'login':
-                require('login.php');
                 showLoginTitle();
                 break;    
             default:
-                require('error.php');
                 showErrorTitle();
                 break;
         }
     echo '-ProtoWebsite</title>';
 }
 
-function showBodySection($page) { 
+function showBodySection($inputdata) { 
     echo '<body>' . PHP_EOL;
     echo '  <div class="container">' . PHP_EOL; 
-    showHeader($page); 
+    showHeader($inputdata); 
     showMenu(); 
-    showContent($page); 
+    showContent($inputdata); 
     showFooter(); 
     echo '  </div>' . PHP_EOL;         
     echo '</body>' . PHP_EOL;  
@@ -91,10 +160,10 @@ function endDocument() {
     echo '</html>';
 }
 
-function showHeader($page) {
+function showHeader($inputdata) {
     echo '<header>' . PHP_EOL;
     echo '  <h1>';
-    switch ($page) {
+    switch ($inputdata['page']) {
         case 'home':
             showHomeHeader();
             break;
@@ -128,21 +197,30 @@ function showMenu() {
     echo '|'; 
     showMenuItem("contact", "CONTACT");
     echo '|'; 
-    showMenuItem("register", "REGISTER"); 
-    echo '|';
-    showMenuItem("login", "LOGIN"); 
+    
+    // if(isUserLoggedIn()) {
+    //     showMenuItem("home", "LOGOUT");
+    // } else {
+        showMenuItem("register", "REGISTER"); 
+        echo '|';
+        showMenuItem("login", "LOGIN");
+    // } 
     echo '
         </ul>  
     </nav>'; 
 } 
 
 function showMenuItem($link, $text) {
-    echo '<li><a href="index.php?page=' . $link . '">' . $text . '</a></li>';
+    if ($text === "LOGOUT") {
+        echo '<li><a href="index.php?page=' . $link . '&action=logout">' . $text . ': ' . $_SESSION['name'] . '</a></li>';
+    } else {
+        echo '<li><a href="index.php?page=' . $link . '">' . $text . '</a></li>';
+    }
 }
 
-function showContent($page) {
+function showContent($inputdata) {
     echo '<div class="content">' . PHP_EOL;
-    switch ($page) {
+    switch ($inputdata['page']) {
         case 'home':
             showHomeContent();
             break;
@@ -150,13 +228,16 @@ function showContent($page) {
             showAboutContent();
             break;
         case 'contact':
-            showContactContent();
+            showContactForm($inputdata);
+            break; 
+        case 'thanks':
+            showContactThanks($inputdata);
             break;
         case 'register':
-            showRegisterContent();
+            showRegisterForm($inputdata);
             break;
         case 'login':
-            showLoginContent();
+            showLoginForm($inputdata);
             break;
         default:
             showErrorContent();
@@ -164,7 +245,6 @@ function showContent($page) {
     }
     echo '</div>' . PHP_EOL;
 }
-
 
 function showFooter() {
     echo '

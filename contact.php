@@ -8,26 +8,6 @@ function showContactHeader() {
     echo 'Contacteer Mij';
 }
 
-function showContactContent() {
-    require('validations.php');
-    $inputdata = initializeFormData('contact');
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $inputdata = validateContactForm($inputdata);
-        if ($inputdata['valid']) {
-            require('userservice.php');
-            //display submitted inputdata if $valid is true
-            showContactThanks($inputdata);
-        } else {
-            //display contact form if $valid is false
-            showContactForm($inputdata);
-        }
-    } else {
-        //display contact form by default if not a POST request
-        showContactForm($inputdata);
-    }
-}
-
 function showContactThanks($inputdata) {
     // Extract values from the $inputdata array
     extract($inputdata);

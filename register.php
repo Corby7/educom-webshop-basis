@@ -8,35 +8,6 @@ function showRegisterHeader() {
     echo 'Registreer Nu!';
 }
 
-function showRegisterContent() {
-    require('validations.php');
-    $inputdata = initializeFormData('register');
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $inputdata = validateRegisterForm($inputdata);
-        if ($inputdata['valid']) {
-            // extract values from the $inputdata array
-            extract($inputdata);
-
-            require('userservice.php');
-            //check if email is known
-            $emailExists = doesEmailExist($email);
-
-            if ($emailExists) {
-                handleKnownEmail($inputdata);
-            } else {
-                handleUnknownEmail($email, $name, $pass);
-            }
-        } else {
-            //display register form if $valid is false
-            showRegisterForm($inputdata);
-        }
-    } else {
-        //display register form by default if not a POST request
-        showRegisterForm($inputdata);
-    }
-}
-
 function showRegisterForm($inputdata) {
     //extract values from the $userdata array
     extract($inputdata);
