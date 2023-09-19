@@ -19,7 +19,7 @@ function showLoginContent() {
             extract($inputdata);
 
             require('userservice.php');
-            $result = authenticateUser($email, $pass, $userdata_array);
+            $result = authenticateUser($email, $pass);
             handleAuthentication($result, $inputdata);
         } else {
             //display contact form if $valid is false
