@@ -19,10 +19,10 @@ function showRegisterContent() {
             extract($inputdata);
 
             require('userservice.php');
-            //check if email is known, i.e. not null
-            $emailKnown = findUserByEmail($email, $userdata_array) !== null;
+            //check if email is known
+            $emailExists = doesEmailExist($email);
 
-            if ($emailKnown) {
+            if ($emailExists) {
                 handleKnownEmail($inputdata);
             } else {
                 handleUnknownEmail($email, $name, $pass);

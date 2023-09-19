@@ -22,7 +22,8 @@ function handleKnownEmail($inputdata) {
 //if email is unknown, save new userdata, send to login
 function handleUnknownEmail($email, $name, $pass) {
     echo "email is not found";
-    writeUserDataFile($email, $name, $pass);
+    saveUser($email, $name, $pass);
+    //not sure if i can use header?
     header('Location: index.php?page=login');
     exit; //exit to prevent further execution
 }
@@ -31,8 +32,8 @@ define("RESULT_OK", 0);
 define("RESULT_UNKNOWN_USER", -1);
 define("RESULT_WRONG_PASSWORD", -2);
 
-function authenticateUser($email, $pass, $userdata_array) {
-    $user = findUserByEmail($email, $userdata_array);
+function authenticateUser($email, $pass) {
+    $user = findUserByEmail($email);
     
     if(empty($user)) {
         return ['result' => RESULT_UNKNOWN_USER]; //no user found with this email
@@ -54,11 +55,22 @@ function handleAuthentication($result, $inputdata) {
             $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
             break;
         case RESULT_OK;
-            echo 'Authentication succesfull';
-            return; //exit early, no need to call showLoginForm()
+            $user = $result['user'];
+            echo 'Authentication successful: ' . $user['name'] . ';';
+            loginUser($user['name']);
+            
     }
 
     showLoginForm($inputdata);
 }
 
+function doesEmailExist($email) {
+    $user = findUserByEmail($email);
+    return !empty($user);
+}
+
+function storeUser($email, $name, $pass) {
+    //room for future password encryption
+    saveUser($email, $name, $pass);
+}
 ?>
