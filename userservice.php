@@ -1,7 +1,5 @@
 <?php
 
-require('filerepository.php');
-
 function getSalutation($gender) {
     switch ($gender) {
         case 'male':
@@ -13,26 +11,12 @@ function getSalutation($gender) {
     }
 }
 
-//if email is known already, show error
-function handleKnownEmail($inputdata) {
-    $inputdata['emailknownErr'] = "E-mailadres is reeds bekend";
-    showRegisterForm($inputdata);
-}
-
-//if email is unknown, save new userdata, send to login
-function handleUnknownEmail($email, $name, $pass) {
-    echo "email is not found";
-    writeUserDataFile($email, $name, $pass);
-    header('Location: index.php?page=login');
-    exit; //exit to prevent further execution
-}
-
 define("RESULT_OK", 0);
 define("RESULT_UNKNOWN_USER", -1);
 define("RESULT_WRONG_PASSWORD", -2);
 
-function authenticateUser($email, $pass, $userdata_array) {
-    $user = findUserByEmail($email, $userdata_array);
+function authenticateUser($email, $pass) {
+    $user = findUserByEmail($email);
     
     if(empty($user)) {
         return ['result' => RESULT_UNKNOWN_USER]; //no user found with this email
@@ -45,21 +29,28 @@ function authenticateUser($email, $pass, $userdata_array) {
     return ['result' => RESULT_OK, 'user' => $user]; //email matches password
 }
 
-function handleAuthentication($result, $inputdata) {
-    switch ($result['result']) {
-        case RESULT_UNKNOWN_USER;
-            $inputdata['emailunknownErr'] = "E-mailadres is onbekend";
-            break;
-        case RESULT_WRONG_PASSWORD;
-            $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
-            break;
-        case RESULT_OK;
-            $user = $result['user'];
-            loginUser($user['name']);
-            return; //exit early, no need to call showLoginForm()
-    }
+// function handleAuthentication($result, $inputdata) {
+//     switch ($result['result']) {
+//         case RESULT_UNKNOWN_USER;
+//             $inputdata['emailunknownErr'] = "E-mailadres is onbekend";
+//             break;
+//         case RESULT_WRONG_PASSWORD;
+//             $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
+//             break;
+//         case RESULT_OK;
+//             $user = $result['user'];
+//             echo 'Authentication successful: ' . $user['name'] . ';';
+//             loginUser($user['name']);
+//     }
+// }
 
-    showLoginForm($inputdata);
+function doesEmailExist($email) {
+    $user = findUserByEmail($email);
+    return !empty($user);
 }
 
+function storeUser($email, $name, $pass) {
+    //room for future password encryption
+    saveUser($email, $name, $pass);
+}
 ?>

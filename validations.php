@@ -131,6 +131,10 @@ function validateRegisterForm($inputdata) {
         $emailErr = "Email is vereist";
     }
 
+    if (!empty($email) && doesEmailExist($email)) {
+        $emailknownErr = "E-mailadres is reeds bekend";
+    }
+
     $pass = testInput(getPostVar("pass"));
     if (empty($pass)) {
         $passErr = "Wachtwoord is vereist";
@@ -145,8 +149,8 @@ function validateRegisterForm($inputdata) {
         $passcheckErr = validatePassword($pass, $repeatpass);
     }
 
-//if no errors found set $valid to true
-    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr) && empty($passcheckErr)) {
+    //if no errors found, set username and set valid to true
+    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr) && empty($passcheckErr) && empty($emailknownErr)) {
         $name = $fname . ' ' . $lname;
         $valid = true;
     }

@@ -8,29 +8,6 @@ function showLoginHeader() {
     echo 'Login';
 }
 
-function showLoginContent() {
-    require('validations.php');
-    $inputdata = initializeFormData('login');
-    
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $inputdata = validateLoginForm($inputdata);
-        if ($inputdata['valid']) {
-            // extract values from the $inputdata array
-            extract($inputdata);
-
-            require('userservice.php');
-            $result = authenticateUser($email, $pass, $userdata_array);
-            handleAuthentication($result, $inputdata);
-        } else {
-            //display contact form if $valid is false
-            showLoginForm($inputdata);
-        }
-    } else {
-        //display contact form by default if not a POST request
-        showLoginForm($inputdata);
-    }
-}
-
 function showLoginForm($inputdata) {
     //extract values from the $userdata array
     extract($inputdata);
