@@ -1,16 +1,21 @@
 <?php
 
+/** Display the title for the login page. */
 function showLoginTitle() {
     echo 'Login';
 }
 
+/** Display the header for the login page. */
 function showLoginHeader() {
     echo 'Login';
 }
 
-function showLoginForm($inputdata) {
-    //extract values from the $userdata array
-    extract($inputdata);
+/** Display the form for the login page. 
+ *  
+ * @param array $data An array containing input data for the response page.
+*/
+function showLoginForm($data) {
+    extract($data);
 
     echo '
     <form method="post" action="index.php">

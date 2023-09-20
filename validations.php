@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Initialize form data based on the specified form type.
+ *
+ * @param string $formType The type of the form ('contact', 'register', or 'login').
+ * @return array An array containing initialized form data.
+ */
 function initializeFormData($formType) {
     $data = array();
 
@@ -63,10 +69,18 @@ function initializeFormData($formType) {
     return $data;
 }
 
-
-function validateContactForm($inputdata) {
-    // Extract values from the $inputdata array
-    extract($inputdata);
+/**
+ * Validate the contact form data and return validation results.
+ *
+ *  * This function is responsible for validating form data based on the specified form type,
+ * which can be 'contact', 'register', or 'login'. It performs data validation and sanitization,
+ * checks for errors, and returns an array containing the validated form data and any error messages.
+ *
+ * @param array $data An array containing form input data.
+ * @return array An array containing validated form data and error messages.
+ */
+function validateContactForm($data) {
+    extract($data);
 
     //retrieve and sanitize the fields from $_POST
     $gender = testInput(getPostVar("gender"));
@@ -111,9 +125,14 @@ function validateContactForm($inputdata) {
     return compact('gender', 'fname', 'lname', 'email', 'phone', 'preference', 'message', 'genderErr', 'fnameErr', 'lnameErr', 'emailErr', 'phoneErr', 'preferenceErr', 'messageErr', 'valid');
 }
 
-function validateRegisterForm($inputdata) {
-    // extract values from the $inputdata array
-    extract($inputdata);
+/**
+ * Validate the registration form data and return validation results.
+ *
+ * @param array $data An array containing form input data.
+ * @return array An array containing validated form data and error messages.
+ */
+function validateRegisterForm($data) {
+    extract($data);
 
     //retrieve and sanitize the fields from $_POST
     $fname = testInput(getPostVar("fname"));
@@ -158,9 +177,14 @@ function validateRegisterForm($inputdata) {
     return compact ('name', 'fname', 'lname', 'email', 'pass', 'repeatpass', 'fnameErr', 'lnameErr', 'emailErr', 'passErr', 'repeatpassErr', 'passcheckErr', 'emailknownErr', 'valid');
 }
 
-function validateLoginForm($inputdata) {
-    // extract values from the $inputdata array
-    extract($inputdata);
+/**
+ * Validate the login form data and return validation results.
+ *
+ * @param array $data An array containing form input data.
+ * @return array An array containing validated form data and error messages.
+ */
+function validateLoginForm($data) {
+    extract($data);
 
     //retrieve and sanitize the fields from $_POST
     $email = testInput(getPostVar("email"));
@@ -178,13 +202,26 @@ function validateLoginForm($inputdata) {
     return compact ('email', 'pass', 'emailErr', 'passErr', 'emailunknownErr', 'wrongpassErr', 'valid');
 }
 
-function testInput($inputdata) {
-    $inputdata = trim($inputdata);
-    $inputdata = stripslashes($inputdata);
-    $inputdata = htmlspecialchars($inputdata);
-    return $inputdata;
+/**
+ * Sanitize and prepare input data.
+ *
+ * @param string $data The input data to sanitize.
+ * @return string The sanitized input data.
+ */
+function testInput($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
 }
 
+/**
+ * Validate if two passwords match.
+ *
+ * @param string $pass The first password.
+ * @param string $repeatpass The repeated password to compare.
+ * @return string An error message if the passwords don't match; otherwise, an empty string.
+ */
 function validatePassword($pass, $repeatpass) {
     if ($pass !== $repeatpass) {
         return "Wachtwoorden komen niet overeen";

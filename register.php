@@ -1,16 +1,22 @@
 <?php
 
+/** Display the title for the register page. */
 function showRegisterTitle() {
     echo 'Register';
 }
 
+/** Display the header for the register page. */
 function showRegisterHeader() {
     echo 'Registreer Nu!';
 }
 
-function showRegisterForm($inputdata) {
+/** Display the form for the register page. 
+ *  
+ * @param array $data An array containing input data for the response page.
+*/
+function showRegisterForm($data) {
     //extract values from the $userdata array
-    extract($inputdata);
+    extract($data);
 
     echo '
     <form method="post" action="index.php">

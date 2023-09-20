@@ -1,13 +1,16 @@
 <?php
 
+/** Display the title for the about page. */
 function showAboutTitle() {
     echo 'About';
 }
 
+/** Display the header for the about page. */
 function showAboutHeader() {
     echo 'Over Mij';
 }
 
+/** Display the content for the about page. */
 function showAboutContent() {
     echo '
     <p>Hoi! Ik ben Corbijn. Ik ben 25 jaar oud en woon in Utrecht. 

@@ -1,16 +1,22 @@
 <?php
 
+/** Display the title for the contact page. */
 function showContactTitle() {
     echo 'ProtoWebsite';
 }
 
+/** Display the header for the contact page. */
 function showContactHeader() {
     echo 'Contacteer Mij';
 }
 
-function showContactThanks($inputdata) {
-    // Extract values from the $inputdata array
-    extract($inputdata);
+/** Display the thankyou for filling in the contact form. 
+ *  
+ * @param array $data An array containing input data for the response page.
+*/
+function showContactThanks($data) {
+    // Extract values from the $data array
+    extract($data);
 
     echo '
     <h2>Beste ' . getSalutation($gender) . ' ' . $fname . ' ' . $lname . ', bedankt voor het invullen van uw gegevens!</h2>
@@ -23,9 +29,13 @@ function showContactThanks($inputdata) {
     </ul>';
 }
 
-function showContactForm($inputdata) {
-    // Extract values from the $inputdata array
-    extract($inputdata);
+/** Display the form for the contact page. 
+ *  
+ * @param array $data An array containing input data for the response page.
+*/
+function showContactForm($data) {
+    // Extract values from the $data array
+    extract($data);
 
     echo '
     <form method="post" action="index.php">
