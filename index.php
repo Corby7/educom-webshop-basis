@@ -44,7 +44,7 @@ function getUrlVar($key, $default = '') {
 //working on this
 function processRequest($page) {
     $inputdata = initializeFormData($page);
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    //if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         switch($page) {
             case 'contact':
@@ -79,7 +79,7 @@ function processRequest($page) {
                         // You can perform actions here or set a session variable to indicate login
                         // For example, you can set a session variable like $_SESSION['user'] = $result['user'];
                         // Then, you can redirect the user to the home page
-                        $_SESSION['user'] = $result['user'];
+                        loginUser($result['user']);
                         $page = "home";
                     } elseif ($result['result'] === RESULT_UNKNOWN_USER) {
                         // Handle unknown user error
@@ -90,14 +90,19 @@ function processRequest($page) {
                     }
                 }
                 break;
+            
+            case 'logout':
+                logoutUser();
+                $page = "home";
+                break;
         }
         $inputdata['page'] = $page;
         return $inputdata;
-    } else {
-        //display form by default if not a POST request
-        $inputdata['page'] = $page;
-        return $inputdata;
-    }
+    // } else {
+    //     //display form by default if not a POST request
+    //     $inputdata['page'] = $page;
+    //     return $inputdata;
+    // }
 }
 
 function showResponsePage($inputdata) {
@@ -163,6 +168,7 @@ function endDocument() {
 function showHeader($inputdata) {
     echo '<header>' . PHP_EOL;
     echo '  <h1>';
+    echo getLoggedInUserName() . " ";
     switch ($inputdata['page']) {
         case 'home':
             showHomeHeader();
@@ -198,24 +204,20 @@ function showMenu() {
     showMenuItem("contact", "CONTACT");
     echo '|'; 
     
-    // if(isUserLoggedIn()) {
-    //     showMenuItem("home", "LOGOUT");
-    // } else {
+    if(isUserLoggedIn()) {
+        showMenuItem("logout", "LOGOUT " . getLoggedInUserName());
+    } else {
         showMenuItem("register", "REGISTER"); 
         echo '|';
         showMenuItem("login", "LOGIN");
-    // } 
+    } 
     echo '
         </ul>  
     </nav>'; 
 } 
 
 function showMenuItem($link, $text) {
-    if ($text === "LOGOUT") {
-        echo '<li><a href="index.php?page=' . $link . '&action=logout">' . $text . ': ' . $_SESSION['name'] . '</a></li>';
-    } else {
         echo '<li><a href="index.php?page=' . $link . '">' . $text . '</a></li>';
-    }
 }
 
 function showContent($inputdata) {

@@ -8,7 +8,9 @@ function isUserLoggedIn() {
     return isset($_SESSION['name']) && !empty($_SESSION['name']);
 }
 
-function getLoggedInUserName() {}
+function getLoggedInUserName() {
+    return isset($_SESSION['name']) ? $_SESSION['name'] : '';
+}
 
 function logoutUser() {
     // remove all session variables
