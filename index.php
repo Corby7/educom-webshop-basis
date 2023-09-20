@@ -14,12 +14,17 @@ require('register.php');
 require('login.php');
 require('error.php');
 
-//MAIN APP
+/** MAIN APP */
 $page = getRequestedPage();
-$inputdata = processRequest($page);
-showResponsePage($inputdata);
+$data = processRequest($page);
+showResponsePage($data);
 
-//FUNCTIONS
+/**
+ * Get the requested page based on the request method.
+ *
+ * @param string $page The default page to return if the request method is not POST.
+ * @return string The requested page.
+ */
 function getRequestedPage() {
     $requested_type = $_SERVER['REQUEST_METHOD'];
     if ($requested_type == 'POST') {
@@ -31,34 +36,68 @@ function getRequestedPage() {
     return $requested_page;
 }
 
+/**
+ * Get a POST variable with optional default value.
+ *
+ * @param string $key The key to search for in the POST data.
+ * @param string $default (optional) The default value to return if the key is not found.
+ * @return string The value of the POST variable or the default if not found.
+ */
 function getPostVar($key, $default = '') {
     $value = filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING);
     return isset($value) ? $value : $default;
 }
 
+/**
+ * Get a URL variable with optional default value.
+ *
+ * @param string $key The key to search for in the URL.
+ * @param string $default (optional) The default value to return if the key is not found.
+ * @return string The value of the URL variable or the default if not found.
+ */
 function getUrlVar($key, $default = '') {
     $value = filter_input(INPUT_GET, $key, FILTER_SANITIZE_STRING);
     return isset($value) ? $value : $default;
 }
 
-//working on this
+
+/**
+ * Process the request and perform actions based on the page and request method.
+ *
+ * This function handles both GET and POST requests for different pages of the web application.
+ * It performs the following steps:
+ *
+ * 1. Initialize form data for the specified page using `initializeFormData`.
+ * 2. If the request method is POST:
+ *    - For the "contact" page, validate the contact form data and update the page to "thanks" if the data is valid.
+ *    - For the "register" page, validate the registration form data. If valid, save the user and update the page to "login."
+ *    - For the "login" page, validate the login form data, authenticate the user, and set the user's session if successful.
+ *      It also handles errors related to unknown users or wrong passwords.
+ * 3. If the request method is GET:
+ *    - For the "logout" page, log the user out and update the page to "home."
+ *
+ * Finally, it sets the page in the `$data` array and returns it.
+ * 
+ * @param string $page The current page.
+ * @return array An array containing input data for the response page.
+ */
 function processRequest($page) {
-    $inputdata = initializeFormData($page);
-    //if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $data = initializeFormData($page);
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         switch($page) {
             case 'contact':
-                $inputdata = validateContactForm($inputdata);
-                if($inputdata['valid']) {
+                $data = validateContactForm($data);
+                if($data['valid']) {
                     $page = "thanks";
                 }
                 break;
 
             case 'register':
-                $inputdata = validateRegisterForm($inputdata);
-                if ($inputdata['valid']) {
-                    // extract values from the $inputdata array
-                    extract($inputdata);
+                $data = validateRegisterForm($data);
+                if ($data['valid']) {
+                    extract($data);
 
                     saveUser($email, $name, $pass);
                     $page = "login";
@@ -66,68 +105,77 @@ function processRequest($page) {
                 break;
 
             case 'login':
-                $inputdata = validateLoginForm($inputdata);
-                if ($inputdata['valid']) {
-                    // Extract values from the $inputdata array
-                    extract($inputdata);
+                $data = validateLoginForm($data);
+                if ($data['valid']) {
+                    extract($data);
 
                     $result = authenticateUser($email, $pass);
 
-                    // Check authentication result
-                    if ($result['result'] === RESULT_OK) {
-                        // Authentication is successful
-                        // You can perform actions here or set a session variable to indicate login
-                        // For example, you can set a session variable like $_SESSION['user'] = $result['user'];
-                        // Then, you can redirect the user to the home page
-                        loginUser($result['user']);
-                        $page = "home";
-                    } elseif ($result['result'] === RESULT_UNKNOWN_USER) {
-                        // Handle unknown user error
-                        $inputdata['emailunknownErr'] = "E-mailadres is onbekend";
+                    if ($result['result'] === RESULT_UNKNOWN_USER) {
+                        $data['emailunknownErr'] = "E-mailadres is onbekend";
                     } elseif ($result['result'] === RESULT_WRONG_PASSWORD) {
-                        // Handle wrong password error
-                        $inputdata['wrongpassErr'] = "Wachtwoord is onjuist";
+                        $data['wrongpassErr'] = "Wachtwoord is onjuist";
+                    } elseif ($result['result'] === RESULT_OK) {
+                        $username = $result['user']['name'];
+                        loginUser($username);
+                        $page = "home";
                     }
                 }
                 break;
-            
-            case 'logout':
-                logoutUser();
-                $page = "home";
-                break;
         }
-        $inputdata['page'] = $page;
-        return $inputdata;
-    // } else {
-    //     //display form by default if not a POST request
-    //     $inputdata['page'] = $page;
-    //     return $inputdata;
-    // }
+        $data['page'] = $page;
+        return $data;
+
+    } else {
+        if ($page === 'logout') {
+            logoutUser();
+            $page = "home";
+        }
+
+        $data['page'] = $page;
+        return $data;
+    }
 }
 
-function showResponsePage($inputdata) {
+/**
+ * Display the response page based on the input data.
+ *
+ * @param array $data An array containing input data for the response page.
+ */
+function showResponsePage($data) {
     beginDocument();
-    showHeadSection($inputdata);
-    showBodySection($inputdata);
+    showHeadSection($data);
+    showBodySection($data);
     endDocument();
 }
 
+/** Begin the HTML document. */
 function beginDocument() {
     echo '
     <!DOCTYPE html>
     <html>';
 }
 
-function showHeadSection($inputdata) {
+/**
+ * Display the head section of the HTML document.
+ *
+ * @param array $data An array containing input data for the response page.
+ */
+function showHeadSection($data) {
     echo '    <head>' . PHP_EOL;
     echo '<link rel="stylesheet" href="CSS/style.css">';
-    showTitle($inputdata);
+    showTitle($data);
     echo '    </head>' . PHP_EOL;
 }
 
-function showTitle($inputdata) {
+/**
+ * Display the title of the HTML document.
+ *
+ * @param array $data An array containing input data for the response page.
+ */
+function showTitle($data) {
     echo '<title>';
-        switch ($inputdata['page']) {
+        switch ($data['page']) {
             case 'home':
                 showHomeTitle();
                 break;
@@ -135,6 +183,7 @@ function showTitle($inputdata) {
                 showAboutTitle();
                 break;
             case 'contact':
+            case 'thanks':
                 showContactTitle();
                 break;
             case 'register':
@@ -150,26 +199,36 @@ function showTitle($inputdata) {
     echo '-ProtoWebsite</title>';
 }
 
-function showBodySection($inputdata) { 
+/**
+ * Display the body section of the HTML document.
+ *
+ * @param array $data An array containing input data for the response page.
+ */
+function showBodySection($data) { 
     echo '<body>' . PHP_EOL;
     echo '  <div class="container">' . PHP_EOL; 
-    showHeader($inputdata); 
+    showHeader($data); 
     showMenu(); 
-    showContent($inputdata); 
+    showContent($data); 
     showFooter(); 
     echo '  </div>' . PHP_EOL;         
     echo '</body>' . PHP_EOL;  
 } 
 
+/** End the HTML document. */
 function endDocument() {
     echo '</html>';
 }
 
-function showHeader($inputdata) {
+/**
+ * Display the header section of the HTML document.
+ *
+ * @param array $data An array containing input data for the response page.
+ */
+function showHeader($data) {
     echo '<header>' . PHP_EOL;
     echo '  <h1>';
-    echo getLoggedInUserName() . " ";
-    switch ($inputdata['page']) {
+    switch ($data['page']) {
         case 'home':
             showHomeHeader();
             break;
@@ -177,6 +236,7 @@ function showHeader($inputdata) {
             showAboutHeader();
             break;
         case 'contact':
+        case 'thanks':
             showContactHeader();
             break;
         case 'register':
@@ -193,6 +253,7 @@ function showHeader($inputdata) {
     echo '</header>' . PHP_EOL;
 }
 
+/** Display the menu section of the HTML document. */
 function showMenu() { 
     echo ' 
     <nav> 
@@ -216,13 +277,24 @@ function showMenu() {
     </nav>'; 
 } 
 
+/**
+ * Display a menu item with a link and text.
+ *
+ * @param string $link The link to the page.
+ * @param string $text The text to display for the menu item.
+ */
 function showMenuItem($link, $text) {
         echo '<li><a href="index.php?page=' . $link . '">' . $text . '</a></li>';
 }
 
-function showContent($inputdata) {
+/**
+ * Display the content section of the HTML document.
+ *
+ * @param array $data An array containing input data for the response page.
+ */
+function showContent($data) {
     echo '<div class="content">' . PHP_EOL;
-    switch ($inputdata['page']) {
+    switch ($data['page']) {
         case 'home':
             showHomeContent();
             break;
@@ -230,16 +302,16 @@ function showContent($inputdata) {
             showAboutContent();
             break;
         case 'contact':
-            showContactForm($inputdata);
+            showContactForm($data);
             break; 
         case 'thanks':
-            showContactThanks($inputdata);
+            showContactThanks($data);
             break;
         case 'register':
-            showRegisterForm($inputdata);
+            showRegisterForm($data);
             break;
         case 'login':
-            showLoginForm($inputdata);
+            showLoginForm($data);
             break;
         default:
             showErrorContent();
@@ -248,6 +320,7 @@ function showContent($inputdata) {
     echo '</div>' . PHP_EOL;
 }
 
+/** Display the footer section of the HTML document. */
 function showFooter() {
     echo '
     <footer>

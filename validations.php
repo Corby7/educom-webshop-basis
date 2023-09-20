@@ -169,9 +169,10 @@ function validateRegisterForm($data) {
     }
 
     //if no errors found, set username and set valid to true
-    if (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr) && empty($passcheckErr) && empty($emailknownErr)) {
+    $valid = (empty($fnameErr) && empty($lnameErr) && empty($emailErr) && empty($passErr) && empty($repeatpassErr) && empty($passcheckErr) && empty($emailknownErr));
+    
+    if ($valid) {
         $name = $fname . ' ' . $lname;
-        $valid = true;
     }
 
     return compact ('name', 'fname', 'lname', 'email', 'pass', 'repeatpass', 'fnameErr', 'lnameErr', 'emailErr', 'passErr', 'repeatpassErr', 'passcheckErr', 'emailknownErr', 'valid');
